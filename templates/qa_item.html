@@ -1,0 +1,30 @@
+<div class="mb-4">
+    <!-- Rendered PDF -->
+    <img src="{{ image_url }}" alt="Rendered PDF Page" class="img-fluid mb-3 border border-dark rounded">
+
+    <h4>Vprašanje</h4>
+    <p>{{ question }}</p>
+
+    <h4>Odgovor</h4>
+    <p>{{ answer }}</p>
+
+    <!-- Buttons (Bootstrap) -->
+    <div class="d-flex justify-content-center mt-4">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-success rounded px-3 me-2">Ustrezen</button>
+        <button type="button" class="btn btn-danger rounded px-3 me-2">Neustrezen</button>
+        <button type="button" class="btn btn-warning rounded px-3 me-2">Vnesi popravek</button>
+      </div>
+    </div>
+
+    <!-- Preskoči and Zaključi buttons -->
+    <div class="d-flex justify-content-center mt-3">
+      <button hx-get="/get_next_qa" hx-target="#qa-container" hx-swap="innerHTML"
+              class="btn btn-secondary me-2">
+        Preskoči
+      </button>
+      <button type="button" class="btn btn-secondary" onclick="window.location.href='/thank-you'">
+        Zaključi
+      </button>
+    </div>
+</div>
