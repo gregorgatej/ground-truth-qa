@@ -143,17 +143,21 @@ async def get_next_qa():
     if not qa_data:
         return HTMLResponse(
             '<script>window.location.href="/no-qa";</script>', status_code=200
-        )  # Forces a full browser reload
+        )  #Forces a full browser reload
 
     qa_item = qa_data.pop(0)
     pdf_path = download_pdf(qa_item["documentUrl"].split("#")[0])
     image_url = render_pdf_page(pdf_path, qa_item["pageNumber"], qa_item.get("boundingBoxes", []))
+    
+    from time import time
+    image_url = f"/{image_url}?t={int(time())}"  # Prevents caching issues
+
 
     return qa_template.render(
         rationale=qa_item["rationale"],
         question=qa_item["questions_answers"][0]["question"],
         answer=qa_item["questions_answers"][0]["answer"],
-        image_url=f"/{image_url}"
+        image_url=image_url
     )
 
 
