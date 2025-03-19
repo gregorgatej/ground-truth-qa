@@ -70,6 +70,8 @@ for page in data['documentPages']:
 
         presigned_url = generate_presigned_url(file_name, page_number)
 
+        chunk_id = chunk['chunk']
+
         # Prepare the chunk for QA generation
         # Provide boundingBoxes if they exist, otherwise empty list
         bounding_boxes = chunk.get('boundingBoxes', [])
@@ -79,7 +81,6 @@ for page in data['documentPages']:
             'documentUrl': presigned_url,
             'pageNumber': page_number,
             'fileName': file_name,
-            'boundingBoxes': bounding_boxes
         })
 
         num_per_page[page_number] = num_per_page.get(page_number, 0) + 1
@@ -91,12 +92,12 @@ class QAModel(BaseModel):
     answer_1: str
     question_2: str
     answer_2: str
-    question_3: str
-    answer_3: str
-    question_4: str
-    answer_4: str
-    question_5: str
-    answer_5: str
+    # question_3: str
+    # answer_3: str
+    # question_4: str
+    # answer_4: str
+    # question_5: str
+    # answer_5: str
 
 
 # 8. GPT QA pair generation
@@ -151,14 +152,16 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         'rationale': data['rationale'],
         'questions_answers': [
             {'question': data[f'question_{i}'], 'answer': data[f'answer_{i}']}
-            for i in range(1, 6)
+            for i in range(1, 3)
         ]
     }
     return {
         **transformed_data,
         'documentUrl': gen_data['documentUrl'],
         'pageNumber': gen_data['pageNumber'],
-        'boundingBoxes': gen_data.get('boundingBoxes', [])
+        'boundingBoxes': gen_data.get('boundingBoxes', []),
+        'chunk': gen_data['chunk'],
+        'suggestedText': gen_data['suggestedText'],
     }
 
 # 9. Generate QA pairs for each chunk
