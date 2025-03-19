@@ -1,0 +1,29 @@
+<div class="mb-4">
+    <img id="qa-image" src="{{ image_url }}" alt="Rendered PDF Page"
+         class="img-fluid mb-3 border border-dark rounded">
+  
+    <h4>Vprašanje</h4>
+    <!-- Make it editable -->
+    <textarea name="correctedQuestion" class="form-control" rows="2"
+              form="correctionForm">{{ question }}</textarea>
+  
+    <h4>Odgovor</h4>
+    <textarea name="correctedAnswer" class="form-control" rows="4"
+              form="correctionForm">{{ answer }}</textarea>
+  
+    <div class="d-flex justify-content-center mt-4">
+      <!-- This form will be posted by HTMX to finalize the correction -->
+      <form id="correctionForm" hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML">
+        <input type="hidden" name="index" value="{{ index }}">
+        <input type="hidden" name="evaluation" value="corrected">
+        <button type="submit" class="btn btn-success me-3">Odgovor je zdaj ustrezen</button>
+      </form>
+  
+      <!-- 'Nazaj' returns to read-only mode for this same QA item -->
+      <form hx-get="/display_qa" hx-target="#qa-container" hx-swap="innerHTML">
+        <input type="hidden" name="index" value="{{ index }}">
+        <button type="submit" class="btn btn-secondary">Nazaj</button>
+      </form>
+    </div>
+  </div>
+  
