@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Vrednotenje QA parov</title>
+
+      <!-- NEW: Favicon (logo in tab) -->
+    <link rel="icon" type="image/png" href="/assets/zrsvn_logo.png?t=12345"> <!-- <-- NEW -->
+
     <!-- HTMX for dynamic partial updates -->
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 
@@ -21,6 +25,24 @@
         margin: 0;
         padding: 20px;
       }
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .header-container img {
+        height: 50px; /* Adjust logo size as needed */
+        margin-right: 15px;
+        vertical-align: middle;
+      }
+      .header-container h2 {
+        margin: 0;
+        font-size: 24px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+      }
       #qa-container {
         display: inline-block; /* Allows centering the content block */
         text-align: left;      /* So text inside is left-aligned */
@@ -33,8 +55,11 @@
     </style>
 </head>
 <body>
-    <h2>Vrednotenje parov vprašanj in odgovorov</h2>
-
+    <!-- NEW: Insert the logo to the left of your heading -->
+    <div class="header-container"> <!-- <-- NEW -->
+      <img src="/assets/zrsvn_logo.png" alt="ZRSVN Logo">
+      <h2>Vrednotenje parov vprašanj in odgovorov</h2>
+    </div>
     <!-- We'll inject the first QA item here -->
     <div id="qa-container">
         {{ qa_content | safe }}

@@ -9,10 +9,12 @@ from PIL import Image, ImageDraw
 import hashlib
 from jinja2 import Template
 from time import time
+from datetime import datetime  # <-- Added for timestamp
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")  # <-- NEW
 
 # Flattened QA data, as before
 qa_data_path = Path("data/processed_qa_data.json")
@@ -193,6 +195,10 @@ def evaluate(
         return HTMLResponse('<script>window.location.href="/no-qa";</script>')
 
     item = qa_data[index]
+
+    # Add a 'timestamp' field in the desired format:
+    current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
     record = {
         "rationale": item["rationale"],
         "question": item["question"],
@@ -202,7 +208,8 @@ def evaluate(
         "evaluation": None,
         "correctedQuestion": None,
         "correctedAnswer": None,
-        "skipped": False
+        "skipped": False,
+        "timestamp": current_timestamp
     }
 
     if evaluation == "skip":
