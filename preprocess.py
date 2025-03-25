@@ -1,5 +1,3 @@
-# preprocess.py
-
 import json
 import os
 import hashlib
@@ -10,13 +8,10 @@ from openai import OpenAI
 from pydantic import BaseModel
 from typing import List, Dict, Any
 
-# 1. Load environment variables
 load_dotenv()
 
-# 2. Create OpenAI client (replace with your actual OpenAI API key)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# 3. Initialize S3 client
 s3_access_key = os.getenv("S3_ACCESS_KEY")
 s3_secret_access_key = os.getenv("S3_SECRET_ACCESS_KEY")
 s3_endpoint_url = "https://moja.shramba.arnes.si"
@@ -29,17 +24,16 @@ s3_client = boto3.client(
     aws_secret_access_key=s3_secret_access_key
 )
 
-# 4. Load the source JSON data
+# Load the source JSON data
 data_path = './json_data/processed_SUGEXTRASPLITPoročilo VIPAVA Ph teleius 2021-11-20_split_sectionNumbers-2-10.json'
 with open(data_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-# 5. Configuration for maximum entries per page
+# Configuration for maximum entries per page
 max_per_page = 2
 num_per_page = {}
 file_name = data['fileName']
 
-# We'll store all QA generation input data here
 qa_generation_data = []
 
 def generate_presigned_url(file_key: str, page_number: int) -> str:
@@ -56,7 +50,7 @@ def generate_presigned_url(file_key: str, page_number: int) -> str:
     except Exception as e:
         return f"Error generating link: {e}"
 
-# 6. Populate qa_generation_data by iterating through your JSON
+# Populate qa_generation_data by iterating through the source JSON
 for page in data['documentPages']:
     page_number = page['pageNumber']
 
@@ -85,7 +79,7 @@ for page in data['documentPages']:
 
         num_per_page[page_number] = num_per_page.get(page_number, 0) + 1
 
-# 7. Pydantic model for the GPT response
+# Pydantic model for the GPT response
 class QAModel(BaseModel):
     rationale: str
     question_1: str
@@ -100,7 +94,7 @@ class QAModel(BaseModel):
     # answer_5: str
 
 
-# 8. GPT QA pair generation
+# QA pair generation
 def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generates QA pairs using a specialized GPT-4o-mini method.
@@ -109,7 +103,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     # Build the prompt context
     context = f"Use the following data to generate question answer pairs:\n\n{gen_data['suggestedText']}"
 
-    # Make the request to your specialized GPT model
+    # Make the request to LLM
     response = client.beta.chat.completions.parse(
         model='gpt-4o-mini',
         messages=[
@@ -164,7 +158,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         'suggestedText': gen_data['suggestedText'],
     }
 
-# 9. Generate QA pairs for each chunk
+# Generate QA pairs for each chunk
 processed_data = []
 for entry in qa_generation_data:
     # Some chunks might not have 'suggestedText' – handle gracefully
@@ -173,7 +167,7 @@ for entry in qa_generation_data:
     qa_output = generate_qa_pairs(entry)
     processed_data.append(qa_output)
 
-# 10. Save processed data as JSON for the Flask app
+# Save processed data as JSON
 os.makedirs("data", exist_ok=True)
 output_path = "data/processed_qa_data.json"
 with open(output_path, "w", encoding="utf-8") as f:

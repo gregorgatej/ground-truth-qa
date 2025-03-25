@@ -9,14 +9,14 @@ from PIL import Image, ImageDraw
 import hashlib
 from jinja2 import Template
 from time import time
-from datetime import datetime  # <-- Added for timestamp
+from datetime import datetime
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")  # <-- NEW
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
-# Flattened QA data, as before
+# Flattened QA data
 qa_data_path = Path("data/processed_qa_data.json")
 feedback_path = Path("data/feedback.json")
 if not feedback_path.exists():
@@ -196,7 +196,7 @@ def evaluate(
 
     item = qa_data[index]
 
-    # Add a 'timestamp' field in the desired format:
+    # Add a 'timestamp' field:
     current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
     record = {
@@ -237,5 +237,5 @@ def evaluate(
         return HTMLResponse('<script>window.location.href="/no-qa";</script>')
 
     # Otherwise, return the next QA partial (same index) in read-only mode
-    # because after popping, the "next" item is now at the same index
+    # because after popping, the "next" item is at the same index
     return HTMLResponse(render_qa_partial(index, edit_mode=False))

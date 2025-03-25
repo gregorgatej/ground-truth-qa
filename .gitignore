@@ -1,6 +1,6 @@
 *.pdf
 .env
-todo
+/todo
 /data
 /json_data
 /static
