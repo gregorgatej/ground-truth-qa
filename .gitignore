@@ -1,5 +1,6 @@
 *.pdf
 .env
+.zip
 /todo
 /data
 /json_data
