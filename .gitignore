@@ -56,3 +56,6 @@ build/
 # Virtual environment directories
 venv/
 env/
+
+# Data
+.csv
