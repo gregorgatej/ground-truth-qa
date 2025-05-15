@@ -1,0 +1,616 @@
+{
+  "fileType": "pdf",
+  "fileName": "2019_Poročilo signalni rak_split.pdf",
+  "fileS3Path": "subfolder1/2019_Poročilo signalni rak_split.pdf",
+  "documentPages": [
+    {
+      "pageNumber": 1,
+      "chunks": [
+        {
+          "ref": "#/texts/2",
+          "boundingBox": [
+            {
+              "l": 70.93199920654297,
+              "t": 739.0403442382812,
+              "r": 527.5247802734375,
+              "b": 653.5642700195312,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "8yafSg51g",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "Raki (Crustacea) so členonožci. Eden od redov višjih rakov (Malacostraca) so deseteronožci (Decapoda). Mednje spada družina d dolgorepih škarjevcev oz. košarjev (Astacidae) (Sket 2003), v katero uvrščamo vse avtohtone evropske vrste potočnih rakov. Druge v Evropi neavtohtone vrste spadajo v družini Cambaridae in Parasticidae. V Sloveniji  je bilo do sedaj v naravi registriranih šest tujerodnih vrst potočnih rakov, vzpostavljene populacije so bile odkrite pri treh (Govedič in Vrezec 2018).",
+          "nrCharacters": 493,
+          "fileSeqPosition": 1,
+          "sectionSeqPosition": 1,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/3",
+          "boundingBox": [
+            {
+              "l": 70.71600341796875,
+              "t": 643.6403198242188,
+              "r": 527.5248413085938,
+              "b": 468.8243103027344,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "xRRtLTSzI",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "Vrsta signalni rak (Pacifastacus leniusculus) izvira iz Severne Amerike, v 19. stoletju so ga začeli naseljevati po vsej Evropi, kjer danes velja za najbolj razširjeno invazivno vrsto sladkovodnih rakov (Johnsen in sod. 2010), ki lahko dolgoročno vpliva negativno na celoten vodni ekosistem (Vaeßen in Hollert 2015, Mathers in sod. 2016).  V Sloveniji je bil prvič zabeleženo odkrit leta 2003 v reki Muri, leta 2007 pa tudi v Dravi (Govedič in Vrezec 2018).V Sloveniji naseljuje signalni rak podobne habitate kot domorodni  jelševec (A(Astacus astacus). Najdemo ga v različnih habitatih, od majhnih potokov do velikih  rek in jezer, od evtrofičnih do oligotrofnih vod. Raje izbere počasi tekoče vode, zavetje običajajno poišče v skalnih razpokah ali pod naplavinami in koreninami. Vrsta koplje račine (Govedič  in Vrezec 2018), vendar je aktivnost pogostejša pri mlajših osebkih (ISC 2019). Optimalna temperatura vode za življenje odraslih osebkov je 15–23 o o C, sposoben pa je prenašati temperature tudi do 33 o o C prav tako tudi brakično vodo do slanosti 20 ppt. (ISC 2019).",
+          "nrCharacters": 1078,
+          "fileSeqPosition": 2,
+          "sectionSeqPosition": 2,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/pictures/0",
+          "boundingBox": [
+            {
+              "l": 69.86367797851562,
+              "t": 444.3387756347656,
+              "r": 284.3537902832031,
+              "b": 210.15478515625,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "avjPEZkEH",
+          "contentType": [
+            "picture"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 3,
+          "sectionSeqPosition": 3,
+          "chunkLocalPath": "output_pics_and_tables/2019_Poročilo signalni rak_split_pic1_pg1_b4ee1f4d.png"
+        },
+        {
+          "ref": "#/pictures/1",
+          "boundingBox": [
+            {
+              "l": 289.49017333984375,
+              "t": 444.678466796875,
+              "r": 526.622314453125,
+              "b": 210.51678466796875,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "HbyP4AXxX",
+          "contentType": [
+            "picture"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 4,
+          "sectionSeqPosition": 4,
+          "chunkLocalPath": "output_pics_and_tables/2019_Poročilo signalni rak_split_pic2_pg1_b4ee1f4d.png"
+        },
+        {
+          "ref": "#/texts/4",
+          "boundingBox": [
+            {
+              "l": 89.19551849365234,
+              "t": 197.75437927246094,
+              "r": 382.5583190917969,
+              "b": 188.54600524902344,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "fPoTA7NTy",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-Slika 2:  Signalni rak (Pacifastacus leniusculus). (Foto: S. Zavratnik)",
+          "nrCharacters": 72,
+          "fileSeqPosition": 5,
+          "sectionSeqPosition": 5,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/5",
+          "boundingBox": [
+            {
+              "l": 71.06400299072266,
+              "t": 163.14830017089844,
+              "r": 365.728759765625,
+              "b": 152.14430236816406,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "0jnEmClj0",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "Morfološke značilnosti vrste so (povzeto po Govedič, 2006):",
+          "nrCharacters": 59,
+          "fileSeqPosition": 6,
+          "sectionSeqPosition": 6,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/6",
+          "boundingBox": [
+            {
+              "l": 71.14800262451172,
+              "t": 142.2803192138672,
+              "r": 377.4720153808594,
+              "b": 131.2403106689453,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "qUul9dnSy",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-barva telesa med svetlo in temno rjavo, včasih do opečnate,",
+          "nrCharacters": 60,
+          "fileSeqPosition": 7,
+          "sectionSeqPosition": 7,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/7",
+          "boundingBox": [
+            {
+              "l": 71.14800262451172,
+              "t": 126.44029998779297,
+              "r": 527.5151977539062,
+              "b": 100.08831024169922,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "ilMaWRzXm",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-značilna je bela do svetlo modra lisa na pregibu robustnih škarij, na spodnji strani so škarje rdečkaste,",
+          "nrCharacters": 106,
+          "fileSeqPosition": 8,
+          "sectionSeqPosition": 8,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/8",
+          "boundingBox": [
+            {
+              "l": 71.14797973632812,
+              "t": 94.68830108642578,
+              "r": 375.8160095214844,
+              "b": 83.6843032836914,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "ZIGPIR0nF",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-povprečna dolžina telesa odraslih osebkov od 15 do 17 cm,",
+          "nrCharacters": 58,
+          "fileSeqPosition": 9,
+          "sectionSeqPosition": 9,
+          "chunkLocalPath": null
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "chunks": [
+        {
+          "ref": "#/texts/11",
+          "boundingBox": [
+            {
+              "l": 71.14800262451172,
+              "t": 768.3803100585938,
+              "r": 483.73199462890625,
+              "b": 757.3402709960938,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "BdwVqEQBS",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-dva para zaočesnih grebenov oz. postorbitalnih trnov, vratna brazda je brez trnov,",
+          "nrCharacters": 83,
+          "fileSeqPosition": 10,
+          "sectionSeqPosition": 10,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/12",
+          "boundingBox": [
+            {
+              "l": 71.14800262451172,
+              "t": 752.540283203125,
+              "r": 512.7047729492188,
+              "b": 741.500244140625,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "l55k2E7wC",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-rostrum po vsej dolžini enako širok ali trapezoiden, osrednji greben viden in brez trnov,",
+          "nrCharacters": 90,
+          "fileSeqPosition": 11,
+          "sectionSeqPosition": 11,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/13",
+          "boundingBox": [
+            {
+              "l": 71.14800262451172,
+              "t": 736.6403198242188,
+              "r": 364.3379821777344,
+              "b": 725.6002807617188,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "0N2jRgwei",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "-površina škarij zelo drobno zrnata, na otip skoraj gladka.",
+          "nrCharacters": 59,
+          "fileSeqPosition": 12,
+          "sectionSeqPosition": 12,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/14",
+          "boundingBox": [
+            {
+              "l": 70.83599853515625,
+              "t": 693.9202880859375,
+              "r": 527.50439453125,
+              "b": 578.624267578125,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "0wGhj8zU4",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1,
+            2
+          ],
+          "sectionID": "bMCkUlgdL",
+          "sectionHeader": "1.2.  SIGNALNI RAK (Pacifastacus leniusculus)",
+          "text": "Razmnoževanje je podobno kot pri drugih vrstah potočnih rakov, prične se s padcem temperature v jeseni. Parjenje in drstenje se odvijata septembra ali oktobra, samice nato prenašajo jajca na pleopodih vso zimo do marca oziroma aprila, ko se voda segreje. Izleganje v hladnejših vodah je poznejše (junij in julij), saj je rast odvisna od temperature. Večina osebkov spolno dozori v naslednjem  poletju. Rast je odvisna tudi od gostote, za majhne, na novoustanovljene populacije je značilna hitra rast v kratkem obdobju. Med drugimi vrstami zmernega pasu velja kot ena najhitreje rastočih vrst rakov. V naravi lahko preživijo tudi 9 let. (Procopio 2019)",
+          "nrCharacters": 651,
+          "fileSeqPosition": 13,
+          "sectionSeqPosition": 13,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/16",
+          "boundingBox": [
+            {
+              "l": 70.95600128173828,
+              "t": 515.6002807617188,
+              "r": 527.5499267578125,
+              "b": 444.9803161621094,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "3SuWpWc4q",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Invazivne vrste rakov so običajno kompetitivno superiorne nad avtohtonimi vrstami zaradi večjih klešč ali večjega telesa, bolj agresivne narave in/ali manjše dovzetnosti za predacijo rib (Usio s sod. 2001, Vorburger in Ribi 1999). Zaradi predatorstva a in kanibalizma so razpoložljiva zavetišča eden ključnih omejujočih dejavnikov za katere raki tekmujejo in kažejo znotraj vrstno agresijo (Usio s sod. 2001, Vorburger in Ribi 1999).",
+          "nrCharacters": 433,
+          "fileSeqPosition": 14,
+          "sectionSeqPosition": 1,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/17",
+          "boundingBox": [
+            {
+              "l": 70.87201690673828,
+              "t": 438.1402893066406,
+              "r": 527.5103759765625,
+              "b": 203.74441528320312,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "zM2sU4MO0",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "S poskusi so dokazali, da je signalni rak izrazito dominantnejši pri enako velikih osebkih glede na vrsto jelševec (A(Astacus astacus), Čeprav gre lahko le za nekaj mm razlike pri velikosti, je to ključno in dovolj za uspešno izpodrivanje (Vorburger in Ribi 1999). V nekaterih vodotokih lahko gostota signalnih rakov preseže 20 osebkov na m 2 (Stenroth in Nyström 2003). Poleg tega ima signalni rak (in druge severnoameriške vrste) podaljšano skrkrb za zarod, ki je ključna za uspešno kolonizacije celinskih voda. Morfološke strukture in etološke značilnosti za »oklepanje matere« so prilagoditve izvaljenih osebkov severnoameriških vrst rakov, česar pri evropskih vrstah ni (Holdich 2005). Čeprav za signalnega raka ni znano, da bi v prvotnem naravnem okolju (ZDA) kopal luknje (račine), v Angliji (in drugod po Evropi) to počne precej pogosto (10–20 račin/m 2 ) in s tem uničuje bregove rek in jezer (Usio s sod. 2006, Souty-Grosset s sod. 2006). Poleg tega lahko signalni rak kot skrivališča uporablja blato (se zakoplje) in je manj odvisen od razpoložljivih račin (lukenj in špranj), kot evropske vrste (Vorburger in Ribi 1999). Tujerodne vrste tako nimajo vpliva samo na avtohtone rake, ampak izpodrivajo tudi številne druge vodne organizme (ribe, dvoživke, nevretenčarje in alge) (Usio s sod. 2001); na Japonskem signalnega raka povezujejo z izgubo številnih vrst makrofitov v močvirjih (Usio s sod. 2006).",
+          "nrCharacters": 1412,
+          "fileSeqPosition": 15,
+          "sectionSeqPosition": 2,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/18",
+          "boundingBox": [
+            {
+              "l": 69.94792938232422,
+              "t": 196.868408203125,
+              "r": 527.4959716796875,
+              "b": 81.62042236328125,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "j38Z1O9Il",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Signalni rak ima lahko močan vpliv tudi na ostale združbe v vodotokih: neposredno z zmanjšanjem števila vrst nevretenčarjev in izpodrivanjem ranljivih plenilskih skupin (pijavk, kačjih pastirjev) kot tudi njihovega plena, ter posredno s vplivom na povečanje produkcije bentičnih alg zaradi dvigovanje sedimenta med premikanjem po dnu vodotokov. Signalni rak je sicer bolj požrešen, bolj toleranten na spreminjajoče okoljske parametre in manj občutljiv na plenjenje kot avtohtone evropske vrste (Stenroth in Nyström 2003). Je oportunist, pojé vse, kar je na voljo, vključno z osebki svoje vrste (kanibalizem) in vodno vegetacijo. V stoječih vodnih sistemih imajo vpliv predvsem na  polže (Stenroth in Nyström 2003).",
+          "nrCharacters": 714,
+          "fileSeqPosition": 16,
+          "sectionSeqPosition": 3,
+          "chunkLocalPath": null
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "chunks": [
+        {
+          "ref": "#/texts/21",
+          "boundingBox": [
+            {
+              "l": 69.94798278808594,
+              "t": 770.5762939453125,
+              "r": 527.5092163085938,
+              "b": 685.3042602539062,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "lGnMQhlyr",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Število signalnih rakov se je v Angliji naglo povečalo in vrsta a je izpodrinila avtohtono vrsto koščenca (A(Austopotamobius pallipes) (Peay & Rogers 1999), dokazano pa izpodrine tudi jelševca (A(Astacus astacus) (Vorburger in Ribi 1999). Podobno se dogaja drugje po Evropi (Estonija, Kaldre in sod. 2017). Ugotovili so tudi, da se signalni raki pogosto parijo s samicami potočnega raka, vendar takšna jajca propadejo (Veenvliet 2009),  samice rakov pa imajo le en zarod na leto.",
+          "nrCharacters": 479,
+          "fileSeqPosition": 17,
+          "sectionSeqPosition": 4,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/22",
+          "boundingBox": [
+            {
+              "l": 70.97998046875,
+              "t": 676.0403442382812,
+              "r": 527.517578125,
+              "b": 605.4442749023438,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "12drZ2FMx",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Predvsem v stoječih vodah bogatih s hranili lahko pride do razrasti cianobakterij, ki tvorijo širok spekter toksinov (tudi mikrkrocistinov), raki se s cianobakterijami. Čeprav poskusi niso dokazali, da bi imeli mikrocistini nekaterih cianobakterij negativne vplive na signalne rake se ti toksini akumulirajo v živali in tako prenašajo po prehranjevalni verigi, tudi do človeka (Lirås s sod. 1998).",
+          "nrCharacters": 397,
+          "fileSeqPosition": 18,
+          "sectionSeqPosition": 5,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/23",
+          "boundingBox": [
+            {
+              "l": 70.9559326171875,
+              "t": 598.580322265625,
+              "r": 527.5091552734375,
+              "b": 423.7403259277344,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "M4CJPW7P3",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Poleg račje kuge so poglavitna grožnja evropskim avtohtonim vrstam rakom ravno tujerodne invazivne vrste rakov (Preglednica 1). Tudi Budihna (2001) kot glavni vzrok ogroženosti domorodnih vrst navaja račjo kugo, ki jo povzroča gliva A Aphanomyces astaci. V Sloveniji se je ta razširila gor-vodno po Savi in Dravi (1880–1897). Najpozneje  bi se naj pojavila v izoliranih vodah, nazadnje v Cerkniškem jezeru leta 1909 (Šulgaj 1937, povzeto po Budihna 2001). Veenvlieta (2009) meni, da račja k kuga zaradi razgibanega reliefa fa v Sloveniji verjetno ni dosegla številnih izoliranih potokov. Tako bi naj imeli v Sloveniji, v p primerjavi z mnogimi evropskimi državami, še zelo zdrave populacije rakov. Signalni rak je na povzročitelja kuge praviloma odporen in je večinoma le prenašalec bolezni (Huang in sod. 1994, Bower 2006; DAISIE 2008). Pretekle raziskave na reki Muri so pokazale, da so potočni raki  okuženi s povzročiteljem račje kuge (Kušar in sod. 2013), zato  ponovni pogini domačih vrst v pritokih Mure, po katerih se vrsta že širi, niso izključeni (Govedič in Vrezec 2018).",
+          "nrCharacters": 1082,
+          "fileSeqPosition": 19,
+          "sectionSeqPosition": 6,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/tables/0",
+          "boundingBox": [
+            {
+              "l": 70.47431945800781,
+              "t": 405.9045104980469,
+              "r": 521.0596313476562,
+              "b": 185.9459228515625,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "xe20CJPws",
+          "contentType": [
+            "table"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 20,
+          "sectionSeqPosition": 7,
+          "chunkLocalPath": "output_pics_and_tables/2019_Poročilo signalni rak_split_tab1_pg3_b4ee1f4d.png"
+        },
+        {
+          "ref": "#/texts/25",
+          "boundingBox": [
+            {
+              "l": 71.0116195678711,
+              "t": 185.2261962890625,
+              "r": 346.448486328125,
+              "b": 177.8845977783203,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "BrmL5gNid",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Legenda: 1 – majhna pomembnost, 2 – srednja pomembnost, 3 – velika pomembmbnost.",
+          "nrCharacters": 80,
+          "fileSeqPosition": 21,
+          "sectionSeqPosition": 8,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/26",
+          "boundingBox": [
+            {
+              "l": 70.28400421142578,
+              "t": 153.4403076171875,
+              "r": 527.5379638671875,
+              "b": 82.88030242919922,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "6DbkauTMr",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            2,
+            3
+          ],
+          "sectionID": "UMoNK3kAA",
+          "sectionHeader": "1.3.  VPLIV NA DOMORODNE VRSTE IN EKOSISTEME",
+          "text": "Patogen se z lahkoto prenaša iz  enega vodnega telesa v drugega.  Verjetni načini prenosa vključujejo vodo, ptice, ribe in vsak predmet, ki je bil v kontaktu s kontaminirano vodo. Gliva A. astaci  je lahko prisotna v treh oblikah: micelij, zoospora in cista. Micelij je moč najti v kutikuli rakov. Zoospore, infekcijska oblika glive, se sprostijo iz micelija, ko ta izraste iz kutikule, kar se po navadi zgodi, ko je osebek resno bolan ali mrtev pri evropskih vrstah oz.",
+          "nrCharacters": 470,
+          "fileSeqPosition": 22,
+          "sectionSeqPosition": 9,
+          "chunkLocalPath": null
+        }
+      ]
+    }
+  ]
+}

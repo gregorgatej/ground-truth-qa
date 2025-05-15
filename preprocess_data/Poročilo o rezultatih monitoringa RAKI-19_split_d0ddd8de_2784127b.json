@@ -1,0 +1,480 @@
+{
+  "fileType": "pdf",
+  "fileName": "Poročilo o rezultatih monitoringa RAKI-19_split.pdf",
+  "fileS3Path": "Poročilo o rezultatih monitoringa RAKI-19_split.pdf",
+  "documentPages": [
+    {
+      "pageNumber": 1,
+      "chunks": [
+        {
+          "ref": "#/pictures/0",
+          "boundingBox": [
+            {
+              "l": 33.81008529663086,
+              "t": 61.13763427734375,
+              "r": 61.04659652709961,
+              "b": 33.24346923828125,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "MxD6lCp5I",
+          "contentType": [
+            "picture"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": null,
+          "sectionHeader": null,
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 1,
+          "sectionSeqPosition": 1,
+          "chunkLocalPath": "output_pics_and_tables/Poročilo o rezultatih monitoringa RAKI-19_split_pic1_pg1_2784127b.png"
+        },
+        {
+          "ref": "#/pictures/1",
+          "boundingBox": [
+            {
+              "l": 103.65284729003906,
+              "t": 766.6049194335938,
+              "r": 491.50042724609375,
+              "b": 526.7453002929688,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "v4e3Su5pp",
+          "contentType": [
+            "picture"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": null,
+          "sectionHeader": null,
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 2,
+          "sectionSeqPosition": 2,
+          "chunkLocalPath": "output_pics_and_tables/Poročilo o rezultatih monitoringa RAKI-19_split_pic2_pg1_2784127b.png"
+        },
+        {
+          "ref": "#/texts/2",
+          "boundingBox": [
+            {
+              "l": 116.03070068359375,
+              "t": 569.543212890625,
+              "r": 120.40943908691406,
+              "b": 563.040283203125,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "deha6AoCt",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "0",
+          "nrCharacters": 1,
+          "fileSeqPosition": 3,
+          "sectionSeqPosition": 1,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/3",
+          "boundingBox": [
+            {
+              "l": 116.24111938476562,
+              "t": 592.2836303710938,
+              "r": 120.19902038574219,
+              "b": 585.86083984375,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "cy8gxpOTq",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "2",
+          "nrCharacters": 1,
+          "fileSeqPosition": 4,
+          "sectionSeqPosition": 2,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/4",
+          "boundingBox": [
+            {
+              "l": 115.91046142578125,
+              "t": 614.9037475585938,
+              "r": 120.46955871582031,
+              "b": 608.5210571289062,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "r7kxLPifC",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "4",
+          "nrCharacters": 1,
+          "fileSeqPosition": 5,
+          "sectionSeqPosition": 3,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/5",
+          "boundingBox": [
+            {
+              "l": 116.20104217529297,
+              "t": 637.6441650390625,
+              "r": 120.35934448242188,
+              "b": 631.1412353515625,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "qorp4WxiT",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "6",
+          "nrCharacters": 1,
+          "fileSeqPosition": 6,
+          "sectionSeqPosition": 4,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/6",
+          "boundingBox": [
+            {
+              "l": 116.08080291748047,
+              "t": 660.3244018554688,
+              "r": 120.34931945800781,
+              "b": 653.8214721679688,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "SIViIaP84",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "8",
+          "nrCharacters": 1,
+          "fileSeqPosition": 7,
+          "sectionSeqPosition": 5,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/7",
+          "boundingBox": [
+            {
+              "l": 111.49163818359375,
+              "t": 683.0648193359375,
+              "r": 120.47056579589844,
+              "b": 676.5618896484375,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "GDCYDClFP",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "10",
+          "nrCharacters": 2,
+          "fileSeqPosition": 8,
+          "sectionSeqPosition": 6,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/8",
+          "boundingBox": [
+            {
+              "l": 111.49163818359375,
+              "t": 705.7450561523438,
+              "r": 120.26013946533203,
+              "b": 699.322265625,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "7gV5vuhcf",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "12",
+          "nrCharacters": 2,
+          "fileSeqPosition": 9,
+          "sectionSeqPosition": 7,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/9",
+          "boundingBox": [
+            {
+              "l": 131.7210235595703,
+              "t": 556.5853271484375,
+              "r": 140.9905242919922,
+              "b": 550.0823974609375,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "YMzQ9fvXH",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "20",
+          "nrCharacters": 2,
+          "fileSeqPosition": 10,
+          "sectionSeqPosition": 8,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/10",
+          "boundingBox": [
+            {
+              "l": 141.70094299316406,
+              "t": 553.0082397460938,
+              "r": 144.085693359375,
+              "b": 552.2968139648438,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "8vhk94cJs",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "‐",
+          "nrCharacters": 1,
+          "fileSeqPosition": 11,
+          "sectionSeqPosition": 9,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/11",
+          "boundingBox": [
+            {
+              "l": 144.9814910888672,
+              "t": 556.5853271484375,
+              "r": 428.0615539550781,
+              "b": 548.7496948242188,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "4zxabPihW",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "24,9 25‐29,9 30‐34,9 35‐39,9 40‐44,9 45‐49,9 50‐54,9 55‐59,9 60‐64,9",
+          "nrCharacters": 68,
+          "fileSeqPosition": 12,
+          "sectionSeqPosition": 10,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/12",
+          "boundingBox": [
+            {
+              "l": 163.96200561523438,
+              "t": 754.1303100585938,
+              "r": 432.66058349609375,
+              "b": 738.434326171875,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "4DueexdaI",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "Dolžina telesa (mm) glede na spolno",
+          "nrCharacters": 35,
+          "fileSeqPosition": 13,
+          "sectionSeqPosition": 11,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/13",
+          "boundingBox": [
+            {
+              "l": 263.8079833984375,
+              "t": 731.9002685546875,
+              "r": 332.13958740234375,
+              "b": 719.4802856445312,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "8ZGk2Ucgj",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "strukturo",
+          "nrCharacters": 9,
+          "fileSeqPosition": 14,
+          "sectionSeqPosition": 12,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/14",
+          "boundingBox": [
+            {
+              "l": 453.9407958984375,
+              "t": 639.8132934570312,
+              "r": 481.2904052734375,
+              "b": 633.2401733398438,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "dVJDOt5mT",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "samice",
+          "nrCharacters": 6,
+          "fileSeqPosition": 15,
+          "sectionSeqPosition": 13,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/15",
+          "boundingBox": [
+            {
+              "l": 453.9407958984375,
+              "t": 621.6932983398438,
+              "r": 476.1351013183594,
+              "b": 615.1201782226562,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "d1dJaRLta",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "samci",
+          "nrCharacters": 5,
+          "fileSeqPosition": 16,
+          "sectionSeqPosition": 14,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/texts/16",
+          "boundingBox": [
+            {
+              "l": 70.83599853515625,
+              "t": 490.8202819824219,
+              "r": 527.5224609375,
+              "b": 360.8243103027344,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "WuSYiuBom",
+          "contentType": [
+            "paragraph"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": "Vidra (L(Lutra lutra) je oportunistka, njej glavni plen predstavljajo ribe, ki najpogosteje zavzemajo več  kot 80 % prehrane (Erlinge 1968, Heggberget 1995, Lanszky in sod. 2010). Druge vrste plena so  raki, dvoživke, občasno ptiči, mali sesalci, plazilci, vodne žuželke v tem vrstem redu (Jenkins in sod. 1979). Sestava vidrine diete je odvisna od sezone, raki prednjačijo v toplejših, poletnih mesecih, ko so njihove populacije največjčje (Britton in sod. 2017). To smo potrdili tudi na območjčju Goričkega v letih 2006–2008 (Smole in sod. 2009). V sklopu tega projekta je od februarja do maja 2017 potekal tudi monitoring vidre na območjčju Goričkega. V iztrebkih smo našli ostanke rakov na 8 od 102 lokacij (7,8 %), kljub temu, da prave sezone za rake še ni bilo..",
+          "nrCharacters": 768,
+          "fileSeqPosition": 17,
+          "sectionSeqPosition": 15,
+          "chunkLocalPath": null
+        },
+        {
+          "ref": "#/pictures/2",
+          "boundingBox": [
+            {
+              "l": 101.3280029296875,
+              "t": 352.7701110839844,
+              "r": 493.8521728515625,
+              "b": 80.9636001586914,
+              "coord_origin": "BOTTOMLEFT"
+            }
+          ],
+          "chunkID": "sGdlLPX73",
+          "contentType": [
+            "picture"
+          ],
+          "sectionPages": [
+            1
+          ],
+          "sectionID": "MPnWNqDee",
+          "sectionHeader": null,
+          "text": null,
+          "nrCharacters": null,
+          "fileSeqPosition": 18,
+          "sectionSeqPosition": 16,
+          "chunkLocalPath": "output_pics_and_tables/Poročilo o rezultatih monitoringa RAKI-19_split_pic3_pg1_2784127b.png"
+        }
+      ]
+    }
+  ]
+}

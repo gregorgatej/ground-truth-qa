@@ -1,0 +1,227 @@
+[
+    {
+        "questions_answers": [
+            {
+                "question": "Kakšne rastline rastejo v osrednjem delu travnika?",
+                "answer": "V osrednjem delu travnika rastejo močvirske trave in močvirske zeli, vključno z zdravilno strašnico, zdravilnim čistecem in meto."
+            },
+            {
+                "question": "Koliko znaša višina ločja in šaša?",
+                "answer": "Ločje in šaš zrasteta do višine 1,5 m."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=1",
+        "pageNumber": 1,
+        "boundingBox": [
+            {
+                "l": 71.10542297363281,
+                "t": 702.3316040039062,
+                "r": 523.9793701171875,
+                "b": 605.8172607421875,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "8dSo9avV1",
+        "text": "V osrednjem delu travnika rastejo močvirske trave in močvirske zeli. Zelo gosta sta ločje in šaš, ki zrasteta do višine 1,5 m in to je najnižji del travniške vegetacije, med katero najdemo rastline zdravilne strašnice, zdravilni  čistec in druge cvetoče zeli, vključno z meto. Vzhodno tretjino travnika pa preraščata navadna trstika in med njo prepleten divji hmelj ter skupaj tvorita neprehodno visoko steblikovje, ki je visoko več  kot 2 m. V tem delu praktično ni nobene cvetoče zeli, ker obe rastlini povsem zasenčita drugo vegetacijo v podrasti. Cel travnik je, zaradi visoke zarasti, težko prehoden, posebno v času pojavljanja strašničinega mravljiščarja."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Zakaj v vegetacijski sezoni 2021 travnik ni bil pokošen?",
+                "answer": "Travnik ni bil pokošen, ker je bil del starejše sukcesije zelo težko prehoden med izvajanjem popisov."
+            },
+            {
+                "question": "Katera zdravila sta bila težko opazna med drugo višjo vegetacijo?",
+                "answer": "Rastline zdravilne strašnice so bile le težko opazne med drugo višjo vegetacijo."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=3",
+        "pageNumber": 3,
+        "boundingBox": [
+            {
+                "l": 70.99693298339844,
+                "t": 745.772216796875,
+                "r": 524.2703247070312,
+                "b": 649.2568359375,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "duVGX0xE5",
+        "text": "Travnik v vegetacijski sezoni 2021, v času popisov ni bil pokošen. Del starejše sukcesije travnika je bil med izvajanjem popisov zelo težko prehoden. Rastline zdravilne strašnice so bile le težko opazne med drugo višjo vegetacijo. Na izkrčenem delu pa so odgnale zeljnate rastline in trave, ki so bile prej del gozdne podrasti. Odgnala so tudi semena izkrčenih dreves, predvsem robinije in koreninski poganjki dreves in grmovja. Vegetacija v času popisov tako ni bila najbolj primerna za zadrževanje strašničinega mravljiščarja. Košnja ostanka travnika in mulčenje zarasti na očiščeni površini je bilo izvedeno v septembru 2021, tako da bodo učinki revitalizacije vidni šele od naslednje sezone naprej."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kdaj so bili izvedeni popisi strašničinega mravljiščarja v letu 2021?",
+                "answer": "Popisi so bili izvedeni od 7. julija do 30. avgusta 2021."
+            },
+            {
+                "question": "Koliko popisov metuljev je bilo opravljenih v letu 2021?",
+                "answer": "Opraviili smo 7 popisov metuljev."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=5",
+        "pageNumber": 5,
+        "boundingBox": [
+            {
+                "l": 70.69054412841797,
+                "t": 393.9318542480469,
+                "r": 524.2117309570312,
+                "b": 282.8970031738281,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "oQaYDmVdW",
+        "text": "V letu 2021 smo popise strašničinega mravljiščarja izvedli v času od 7. julija, do 30. avgusta 2021. V tem obdobju smo opravili 7 popisov metuljev in en popis zdravilne strašnice, ko je ta bila v polnem cvetenju. Vremensko je bila sezona 2021 precej spremenljiva, s hladnim spomladanskim obdobjem, ko je fenologija glede na povprečna leta zamujala za 2‐3 tedne, konec avgusta pa je bil deževen in hladen. Številčnost dnevnih metuljev v sezoni 2021 je bila precej pod povprečnimi leti, saj so hitre vremenske spremembe in hladna obdobja neugodno vplivala na življenjski ciklus in na večjo smrtnost vrst, tako v času gosenic, kot med preobrazbo gosenic v metulje. Upad številčnosti vrst smo opazovali po celotni Sloveniji."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Katero vrsto metulja omenjata Zadravec in Verovnik na istem travniku?",
+                "answer": "Zadravec in Verovnik omenjata vrsto 'Maculinea teleius' na istem travniku."
+            },
+            {
+                "question": "Kje se nahaja travnik, ki ga je omenil Zadravec?",
+                "answer": "Travnik se nahaja 'med obema piknik prostoroma', parcela št. 681, k.o. Nova Gorica."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=7",
+        "pageNumber": 7,
+        "boundingBox": [
+            {
+                "l": 70.70587921142578,
+                "t": 599.0722045898438,
+                "r": 524.0875854492188,
+                "b": 502.55731201171875,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "pQdAT7ibn",
+        "text": "Tudi Zadravec (2001), ki v pregledu metuljev Panovca omenja strašničinega mravljiščarja, vrsto dejansko navaja za isti travnik (»med obema piknik prostoroma«, parcela št. 681, k.o. Nova Gorica) kot Verovnik (2000). Tukaj vrsto kot »Maculinea teleius« navaja za »zapuščeni vlažni travnik«. Število opaženih primerkov tudi Zadravec ni podal. Ustno je sporočil, da je tukaj videl 1‐2 primerka. Zadravec je v zborniku, ki predstavlja gozd Panovec navedel le vrste metuljev, ki jih je popisal znotraj območja gozda Panovec, v obdobju 1997‐2000, kamor travnik pri Pikoludu, ki smo ga proučevali v letu 2018, ne spada. Je pa vlažni travnik zraven ZGS NG blizu travnika pri Pikoludu."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kdaj so potekali popisi metuljev v Panovcu?",
+                "answer": "Popisi metuljev v Panovcu so potekali med leti 1997 in 2000."
+            },
+            {
+                "question": "Kako mnoge osebke strašničinega mravljiščarja je Zadravec opazil na travnikih ob Panovcu?",
+                "answer": "Zadravec je ocenil, da je na vsakem travniku videl med 20 do 30 osebkov strašničinega mravljiščarja na dan."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=7",
+        "pageNumber": 7,
+        "boundingBox": [
+            {
+                "l": 71.09173583984375,
+                "t": 489.63140869140625,
+                "r": 524.2769165039062,
+                "b": 365.993408203125,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "vSS970vbF",
+        "text": "Zadravec, ki je soavtor poročila,še dodatno ustno navaja: »Dobro se spominjam travnikov ob Panovcu, na parcelah 879 in 984, k.o. Nova Gorica, kjer je v času popisov metuljev v Panovcu (1997‐2000) bilo precej strašničinih mravljiščarjev. Ocenjujem, da sem jih na vsakem travniku videl med 20 do 30 osebkov na dan. Ni mi znano ali so takrat travnike še kosili ali so jih že opustili, vendar vem, da je bilo tam veliko zdravilne strašnice. Travniki so bili brez grmovja, gozdni rob je segal kakšnih deset metrov nazaj kot leta 2018. Še kakšnih osem let nazaj je bilo stanje precej boljše kot je danes. Takrat smo si z vodjo OE ZRSVN Nova Gorica, ga. Mirjam Gorkič , ogledalizaraščajoče travnike in na njih je bilo prisotnih precej manj osebkov strašničinega mravljiščarja kot v obdobju 1997‐2000. Ocenjujem, da jih je bilo od 5 do 10 osebkov na dan.«"
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kdaj so potekali popisi strašničinega mravljiščarja in zdravilne strašnice?",
+                "answer": "Popisi so potekali v poletnih sezonah 2018 in 2021, od začetka julija do konca avgusta."
+            },
+            {
+                "question": "Kje so bili opravljeni popisi teh vrst?",
+                "answer": "Popisi so bili opravljeni na travniku pri Pikoludu, na parceli številka 879 in delu parcele številka 886, k.o. Nova Gorica."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=8",
+        "pageNumber": 8,
+        "boundingBox": [
+            {
+                "l": 71.10665893554688,
+                "t": 718.5914306640625,
+                "r": 524.1975708007812,
+                "b": 651.056884765625,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "e9HqGm9KR",
+        "text": "V poletnih sezonah 2018 in 2021 smo opravili po 7 popisov strašničinega mravljiščarja in zdravilne strašnice na travniku pri Pikoludu, na parceli številka 879 in delu parcele številka 886, k.o. Nova Gorica. Popise smo izvedli v najprimernejšem obdobju pojavljanja vrste, od začetka julija do konca avgusta. Za določitev najboljšega časa začetka popisov smo vrsto spremljali na širšem območju vlažnih travnikov v okolici, tudi pri Lijaku, kjer je največji ohranjeni kompleks vlažnih travnikov s prisotnostjo vrste."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kdaj so potrdili primerke strašničinega mravljiščarja?",
+                "answer": "V obdobju od 9. do 15. avgusta 2021."
+            },
+            {
+                "question": "Kako je hladno obdobje v aprilu in maju vplivalo na čas pojavljanja vrste v letu 2021?",
+                "answer": "Sezono fenološko zamaknil za 2‐3 tedne."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=8",
+        "pageNumber": 8,
+        "boundingBox": [
+            {
+                "l": 71.10633087158203,
+                "t": 557.671142578125,
+                "r": 523.9461669921875,
+                "b": 475.6777648925781,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "AqJcwL8Ju",
+        "text": "V sezoni 2021 smo v času popisov potrdili le 2 primerka strašničinega mravljiščarja, v obdobju od 9. do 15. avgusta 2021. Čas pojavljanja vrste je v letu 2021 časovno zamujal, zaradi dolgotrajnega hladnega obdobja v aprilu in maju, ki je sezono fenološko zamaknil za 2‐3 tedne. Hladna sezona je vplivala tudi na večjo smrtnost metuljev, tako v fazi gosenic, v času preobrazbe in v krajši življenjski dobi odraslih metuljev. Precej manjšo številčnost dnevnih metuljev smo opazovali tudi drugje po Sloveniji, kjer smo izvajali podobne popise, na Goričkem, na Krasu in ob reki Kolpi."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kdaj je bil popis zdravilne strašnice opravljen?",
+                "answer": "Popis zdravilne strašnice je bil opravljen 30. avgusta 2021."
+            },
+            {
+                "question": "Koliko rastlin je bilo popisanih leta 2021?",
+                "answer": "Skupaj je bilo popisanih 63 rastlin."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=9",
+        "pageNumber": 9,
+        "boundingBox": [
+            {
+                "l": 70.6925277709961,
+                "t": 687.7014770507812,
+                "r": 524.1349487304688,
+                "b": 489.8977355957031,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "geADo9Zjb",
+        "text": "Leta 2021 smo zdravilno strašnico popisali 30. avgusta 2021, saj je bila sezona fenološko kasnejša kot leta 2018. Skupaj smo uspeli popisati 63 rastlin. Vzrok manjšega števila popisanih rastlin kot leta 2018 je verjetno v tem, da travnik v vsem tem obdobju ni bil pokošen in so rastline zaradi visoke zarasti in senčenja izginile iz površine ali niso cvetele,še bolj verjetno pa je, da nam vseh ni uspelo ponovno najti, saj jih je preraščala druga visoka vegetacija, ki je v času popisov povsem prekrivala rastišča in cvetove zdravilne strašnice. Rastline smo morali temeljito iskati med 1,5 – 2 m visoko travniško vegetacijo, ki je bila le težko prehodna. Zato ocenjujemo da število rastlin ni toliko upadlo ampak je vzrok manjšega števila najdenih rastlin bolj v bujni vegetaciji travnika, ki ni bil košen vse do septembra 2021. Travnik so zato močno prerasle številne visoke trave, hmelj in invazivne tujerodne zeli, od rudbekije do orjaške zlate rozge in grmovja, ki izpodrivajo in senčijo zdravilno strašnico. Redna košnja ji bo omogočila boljo konkurenčno sposobnost, saj bodo listne rozete bolj osnončene. Tudi zato pričakujemo, da bo število »vidnih« rastlin zdravilne strašnice v prihodnjih sezonah boljše kot doslej,  če bo travnik redno vzdrževan. V primeru zdravilne strašnice predvidevamo, da se bo uspevanje rastline izboljšalo z redno košnjo po revitalizaciji površine in z dosetvijo senenega drobirja iz ohranjenih močvirskih travnikov."
+    },
+    {
+        "questions_answers": [
+            {
+                "question": "Kaj je bilo težko opaziti na travniku zaradi visoke vegetacije?",
+                "answer": "Zdravilno strašnico."
+            },
+            {
+                "question": "Kje so bile rastline zdravilne strašnice deloma pod krošnjami dreves ali grmovja?",
+                "answer": "Ponekod na travniku."
+            }
+        ],
+        "fileUrl": "https://moja.shramba.arnes.si/eval/EXTRASPLITPoro%C4%8Dilo%20VIPAVA%20Ph%20teleius%202021-11-20_split_sectionNumbers-2-10.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9UD64PCSME8L7CKZHHTO%2F20250515%2Fdefault%2Fs3%2Faws4_request&X-Amz-Date=20250515T034740Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5e5de38c7afd0bce4c5bb48108bcbb557c434dd27f459ee1be9e94d35feffb71#page=9",
+        "pageNumber": 9,
+        "boundingBox": [
+            {
+                "l": 71.09639739990234,
+                "t": 476.97119140625,
+                "r": 526.9441528320312,
+                "b": 278.997314453125,
+                "coord_origin": "BOTTOMLEFT"
+            }
+        ],
+        "chunkID": "WvutSv9An",
+        "text": "Zaradi visoke vegetacije na zaraščajočem se travniku, smo zdravilno strašnico le težko opazili. Cvetovi zdravilne strašnice so komaj segali nad visoko vegetacijo travnika. Ponekod so bile rastline zdravilne strašnice že deloma pod krošnjami dreves ali grmovja, pogosto na samem obrobju tega. Največ zdravilne strašnice je bilo na bolj odprtih delih travnika, z nižjo vegetacijo, ponekod je bila ta celo znotraj trstičja. Opazili smo, da je zdravilna strašnica ostala le na mestih, kjer je po velikosti še konkurenčna drugim rastlinam, na delu šašja in ločja in obrobju travnika. V visoki vegetaciji je nemogoče opaziti listne rozete zdravilne strašnice, zato je popis rastlin mogoč le v času cvetenja, ko so vidni bolj kontrastni, temno rdeči cvetovi. Rastline je potrebno popisati v fenofazi ob koncu cvetenja, ko so odprti vsi cvetni koški, sicer jih hitro spregledamo. Za primerjavo optimalnega časa popisa rastlin smo popis v sezoni 2018 opravili večkrat a je bila razlika v številu rastlin precejšnja. Tako smo npr. 9. avgusta 2018 opazili le 35 cvetočih rastlin, 15. avgusta 2018 pa 90 cvetočih rastlin. Za čas optimalnega popisa samo se zato odločili upoštevati le podatke v času polnega cvetenja rastlin, ker ti podatki najbolj točno ponazarjajo stanje števila rastlin zdravilne strašnice na travniku. Točne koordinate popisa rastlin zdravilne strašnice navajamo na koncu poročila v prilogi."
+    }
+]

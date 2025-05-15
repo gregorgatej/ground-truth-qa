@@ -10,6 +10,7 @@ import hashlib
 from jinja2 import Template
 from time import time
 from datetime import datetime
+import logging
 
 app = FastAPI()
 
@@ -17,8 +18,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 # Flattened QA data
-qa_data_path = Path("data/processed_qa_data.json")
-feedback_path = Path("data/feedback.json")
+qa_data_path = Path("app_data/qa_data.json")
+feedback_path = Path("app_data/feedback.json")
 if not feedback_path.exists():
     feedback_path.write_text("[]", encoding="utf-8")
 
@@ -27,14 +28,13 @@ flattened_data = []
 for item in raw_data:
     for qa in item["questions_answers"]:
         flattened_data.append({
-            "rationale": item["rationale"],
             "question": qa["question"],
             "answer": qa["answer"],
-            "chunk": item["chunk"],
-            "suggestedText": item["suggestedText"],
-            "documentUrl": item["documentUrl"],
+            "chunkID": item["chunkID"],
+            "text": item["text"],
+            "fileUrl": item["fileUrl"],
             "pageNumber": item["pageNumber"],
-            "boundingBoxes": item["boundingBoxes"]
+            "boundingBox": item["boundingBox"]
         })
 qa_data = flattened_data
 
@@ -47,19 +47,33 @@ thank_you_template = Template(Path("templates/thank_you.html").read_text(encodin
 qa_item_readonly_template = Template(Path("templates/qa_item_readonly.html").read_text(encoding="utf-8"))
 qa_item_edit_template = Template(Path("templates/qa_item_edit.html").read_text(encoding="utf-8"))
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+# TODO nadaljuj z implementacijo varivalk za manjkajoce datoteke
 
 def download_pdf(url: str) -> Path:
     pdf_hash = hashlib.md5(url.encode()).hexdigest()
     pdf_path = Path(f"static/{pdf_hash}.pdf")
     if not pdf_path.exists():
-        resp = requests.get(url)
-        pdf_path.write_bytes(resp.content)
+        try:
+            resp = requests.get(url)
+            resp.raise_for_status()  # Raise an exception for bad responses
+            pdf_path.write_bytes(resp.content)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error downloading PDF from {url}: {e}")
+            return None  # Return None if download fails
     return pdf_path
 
-
-def render_pdf_page(pdf_path: Path, page_number: int, bounding_boxes: list) -> str:
-    doc = fitz.open(pdf_path)
-    page = doc.load_page(page_number - 1)
+def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str:
+    if pdf_path is None:
+        return "" # Skip rendering if the PDF isn't available
+    
+    try:
+        doc = fitz.open(pdf_path)
+        page = doc.load_page(page_number - 1)
+    except Exception as e:
+            logging.error(f"Error opening PDF file {pdf_path}: {e}")
+            return ""  # Return empty string to indicate we should skip rendering
     render_dpi = 150
     scale_factor = render_dpi / 72
     render_matrix = fitz.Matrix(scale_factor, scale_factor)
@@ -67,7 +81,7 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_boxes: list) -> s
     img_path = Path("static/rendered.png")
     pix.save(img_path)
 
-    if bounding_boxes:
+    if bounding_box:
         img = Image.open(img_path).convert("RGBA")
         overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
         draw = ImageDraw.Draw(overlay)
@@ -78,7 +92,10 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_boxes: list) -> s
         x_scale = img_width / page_width
         y_scale = img_height / page_height
         PADDING_FACTOR = 0.05
-        for box in bounding_boxes:
+        # TODO This for loop maybe not needed, since we have only one bounding box each time (it
+        # is nested though). We could in preprocess.py change to fetch boundingBox[0] instead of just
+        # boundingBox.
+        for box in bounding_box:
             l = box["l"]
             t = box["t"]
             r = box["r"]
@@ -106,7 +123,6 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_boxes: list) -> s
 
     return str(img_path)
 
-
 @app.get("/", response_class=HTMLResponse)
 def home():
     """
@@ -114,12 +130,26 @@ def home():
     - If we still have QA data, render index.html (with the FIRST QA partial injected).
     - If no data left, show the 'no-qa' template.
     """
+    # if no items at all, go straight to "no QA" page
     if not qa_data:
         return HTMLResponse(no_qa_template.render())
 
-    # We have QA: render the entire layout once with the first item
-    partial_html = render_qa_partial(0, edit_mode=False)
-    # Now inject that partial into the main layout
+    # find first item that actually renders
+    idx = 0
+    partial_html = ""
+    while idx < len(qa_data):
+        partial_html = render_qa_partial(idx, edit_mode=False)
+        if partial_html:
+            break
+        # failed → log and remove
+        logging.info(f"Skipping broken QA at index {idx}")
+        qa_data.pop(idx)
+
+    # after skipping, if list is empty → no QA
+    if not qa_data:
+        return HTMLResponse(no_qa_template.render())
+
+    # render the good one
     final_html = index_template.render(qa_content=partial_html)
     return HTMLResponse(final_html)
 
@@ -144,14 +174,24 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
     If index is out of range, return an empty string or handle externally.
     """
     item = qa_data[index]
-    pdf_path = download_pdf(item["documentUrl"].split("#")[0])
-    image_url = render_pdf_page(pdf_path, item["pageNumber"], item.get("boundingBoxes", []))
+    pdf_path = download_pdf(item["fileUrl"].split("#")[0])
+    
+
+    if pdf_path is None:
+        logging.warning(f"Skipping QA item at index {index} due to PDF download failure.")
+        return ""  # Skip the item if PDF download fails
+
+    image_url = render_pdf_page(pdf_path, item["pageNumber"], item.get("boundingBox", []))
+    
+    if not image_url:  # If the image couldn't be rendered
+        logging.warning(f"Skipping QA item at index {index} due to rendering failure.")
+        return ""  # Skip the item if rendering fails
+
     image_url = f"/{image_url}?t={int(time())}"
 
     if edit_mode:
         return qa_item_edit_template.render(
             index=index,
-            rationale=item["rationale"],
             question=item["question"],
             answer=item["answer"],
             image_url=image_url
@@ -159,7 +199,6 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
     else:
         return qa_item_readonly_template.render(
             index=index,
-            rationale=item["rationale"],
             question=item["question"],
             answer=item["answer"],
             image_url=image_url
@@ -168,20 +207,30 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
 
 @app.get("/edit_qa", response_class=HTMLResponse)
 def edit_qa(index: int):
-    if index < 0 or index >= len(qa_data):
-        # no more QA => full page load of /no-qa
-        return HTMLResponse('<script>window.location.href="/no-qa";</script>')
-    partial_html = render_qa_partial(index, edit_mode=True)
-    return HTMLResponse(partial_html)
+    # skip broken entries
+    while index < len(qa_data):
+        partial = render_qa_partial(index, edit_mode=True)
+        if partial:
+            return HTMLResponse(partial)
+        logging.info(f"Skipping broken QA at index {index}")
+        qa_data.pop(index)
+
+    # no more → no-qa page
+    return HTMLResponse('<script>window.location.href="/no-qa";</script>')
 
 
 @app.get("/display_qa", response_class=HTMLResponse)
 def display_qa(index: int):
-    if index < 0 or index >= len(qa_data):
-        return HTMLResponse('<script>window.location.href="/no-qa";</script>')
-    partial_html = render_qa_partial(index, edit_mode=False)
-    return HTMLResponse(partial_html)
+    # skip until we find a good one
+    while index < len(qa_data):
+        partial = render_qa_partial(index, edit_mode=False)
+        if partial:
+            return HTMLResponse(partial)
+        logging.info(f"Skipping broken QA at index {index}")
+        qa_data.pop(index)
 
+    # none left → go to no-qa
+    return HTMLResponse('<script>window.location.href="/no-qa";</script>')
 
 @app.post("/evaluate", response_class=HTMLResponse)
 def evaluate(
@@ -200,11 +249,10 @@ def evaluate(
     current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
     record = {
-        "rationale": item["rationale"],
         "question": item["question"],
         "answer": item["answer"],
-        "chunk": item["chunk"],
-        "suggestedText": item["suggestedText"],
+        "chunkID": item["chunkID"],
+        "text": item["text"],
         "evaluation": None,
         "correctedQuestion": None,
         "correctedAnswer": None,
@@ -236,6 +284,13 @@ def evaluate(
     if not qa_data:
         return HTMLResponse('<script>window.location.href="/no-qa";</script>')
 
-    # Otherwise, return the next QA partial (same index) in read-only mode
-    # because after popping, the "next" item is at the same index
-    return HTMLResponse(render_qa_partial(index, edit_mode=False))
+    next_idx = index
+    while next_idx < len(qa_data):
+        partial = render_qa_partial(next_idx, edit_mode=False)
+        if partial:
+            return HTMLResponse(partial)
+        logging.info(f"Skipping broken QA at index {next_idx}")  # only logged
+        qa_data.pop(next_idx)
+
+    # If we exhausted the list during skipping, go to no-qa
+    return HTMLResponse('<script>window.location.href="/no-qa";</script>')

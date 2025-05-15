@@ -15,7 +15,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 s3_access_key = os.getenv("S3_ACCESS_KEY")
 s3_secret_access_key = os.getenv("S3_SECRET_ACCESS_KEY")
 s3_endpoint_url = "https://moja.shramba.arnes.si"
-bucket_name = "eval"
+bucket_name = "zrsvn-rag-najdbe"
 
 s3_client = boto3.client(
     's3',
@@ -25,7 +25,7 @@ s3_client = boto3.client(
 )
 
 # Load the source JSON data
-data_path = './json_data/processed_SUGEXTRASPLITPoročilo VIPAVA Ph teleius 2021-11-20_split_sectionNumbers-2-10.json'
+data_path = './preprocess_data/new_22 ZRC SAZU_PoLJUBA_Reintrodukcija_2Poročilo_23c194f1_4df89569.json'
 with open(data_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
@@ -33,6 +33,7 @@ with open(data_path, 'r', encoding='utf-8') as f:
 max_per_page = 2
 num_per_page = {}
 file_name = data['fileName']
+file_s3_path = data['fileS3Path']
 
 qa_generation_data = []
 
@@ -56,15 +57,15 @@ for page in data['documentPages']:
 
     for chunk in page['chunks']:
         # Skip short text
-        if chunk.get('nrCharacters') is None or chunk['nrCharacters'] < 500:
+        if chunk.get('nrCharacters') is None or chunk['nrCharacters'] < 512:
             continue
 
         if num_per_page.get(page_number, 0) >= max_per_page:
             continue
 
-        presigned_url = generate_presigned_url(file_name, page_number)
+        presigned_url = generate_presigned_url(file_s3_path, page_number)
 
-        chunk_id = chunk['chunk']
+        chunk_id = chunk['chunkID']
 
         # Prepare the chunk for QA generation
         # Provide boundingBoxes if they exist, otherwise empty list
@@ -81,27 +82,18 @@ for page in data['documentPages']:
 
 # Pydantic model for the GPT response
 class QAModel(BaseModel):
-    rationale: str
     question_1: str
     answer_1: str
     question_2: str
     answer_2: str
-    # question_3: str
-    # answer_3: str
-    # question_4: str
-    # answer_4: str
-    # question_5: str
-    # answer_5: str
-
 
 # QA pair generation
 def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generates QA pairs using a specialized GPT-4o-mini method.
-    (Adapted from your code that uses .parse)
     """
     # Build the prompt context
-    context = f"Use the following data to generate question answer pairs:\n\n{gen_data['suggestedText']}"
+    context = f"Use the following text to generate question answer pairs:\n\n{gen_data['text']}"
 
     # Make the request to LLM
     response = client.beta.chat.completions.parse(
@@ -110,25 +102,27 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "system",
                 "content": '''You are an AI assistant that always responds in Slovene.
-                You are tasked with turning data into
-                a set of question answer pairs which will be used to test information
-                extraction systems. it is your job to create a set of question and
-                answer pairs which explore a range of topics concerned with the population count of a
-                Carpodacus erythrinus bird, where the information is presented in several ways.
+                You are tasked with turning text into a set of question-answer pairs. 
+                The goal is to create a set of clear, specific, and relevant questions and answers 
+                that can be answered directly from the provided text.
 
-                First, look at the data and construct a "rationale". This rationale
-                should include a breakdown of the types of information presented, and
-                what an information extraction system might fail at when analyzing this
-                type of data. Then, generate a batch of question-answer pairs
-                that would adequetly test based on the rationale.
+                Important considerations for questions:
+                - The question should be clear enough that a single answer can be found for it.
+                - Ensure that every question is strictly based on the content of the provided text.
+                - The questions should not introduce external context or assumptions. Stick only to the information available in the text.
+                - Avoid questions that are too general or abstract. For example, instead of asking "What is this text about?", focus on specific facts or details mentioned in the text.
+                - Avoid using phrases like "in this paragraph", "in this section", "in this document" in the questions.
+                - Each question should target a specific concept or piece of information in the text.
+                - All of the generated text should be written in Slovenian language.
 
-                Important considerations:
-                - The question should be clear enough where a single answer can be found
-                - There are tens of documents. Questions must be specific.
-                - Avoid questions like "this figure", "in the section" and "in the document",
-                as there are many documents.
-                - The objective is to ask fair questions where a clear answer is obvious.
-                - All the generated text should be written in Slovenian language'''
+                Important considerations for answers:
+                - The answer should directly address the question without introducing external context or assumptions.
+                - Keep the answer concise, focusing on the most relevant and clear part of the content that answers the question.
+                - Avoid unnecessary elaboration, explanations, or additional details that are not needed to answer the question.
+                - If the answer is based on specific text from the provided input, use exact or paraphrased wording from that text. Do not invent or assume details outside of the provided information.
+                - Each answer should be easy to understand and should not require additional interpretation. Avoid complex or vague responses.
+                - Ensure that all answers are strictly based on the content of the text, providing only the most relevant information to answer the question at hand.
+                - All of the generated text should be written in Slovenian language.'''
             },
             {
                 "role": "user",
@@ -143,7 +137,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     data = parsed_model.dict()
 
     transformed_data = {
-        'rationale': data['rationale'],
+        #'rationale': data['rationale'],
         'questions_answers': [
             {'question': data[f'question_{i}'], 'answer': data[f'answer_{i}']}
             for i in range(1, 3)
@@ -154,15 +148,15 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         'documentUrl': gen_data['documentUrl'],
         'pageNumber': gen_data['pageNumber'],
         'boundingBoxes': gen_data.get('boundingBoxes', []),
-        'chunk': gen_data['chunk'],
-        'suggestedText': gen_data['suggestedText'],
+        'chunkID': gen_data['chunkID'],
+        'text': gen_data['text'],
     }
 
 # Generate QA pairs for each chunk
 processed_data = []
 for entry in qa_generation_data:
     # Some chunks might not have 'suggestedText' – handle gracefully
-    if not entry.get('suggestedText'):
+    if not entry.get('text'):
         continue
     qa_output = generate_qa_pairs(entry)
     processed_data.append(qa_output)
