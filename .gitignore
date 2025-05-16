@@ -60,4 +60,5 @@ venv/
 env/
 
 # Data
-.csv
+*.csv
+*.json

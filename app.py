@@ -30,9 +30,11 @@ for item in raw_data:
         flattened_data.append({
             "question": qa["question"],
             "answer": qa["answer"],
-            "chunkID": item["chunkID"],
             "text": item["text"],
+            "chunkID": item["chunkID"],
             "fileUrl": item["fileUrl"],
+            "fileS3Path": item["fileS3Path"],
+            "fileName": item["fileName"],
             "pageNumber": item["pageNumber"],
             "boundingBox": item["boundingBox"]
         })
@@ -251,8 +253,11 @@ def evaluate(
     record = {
         "question": item["question"],
         "answer": item["answer"],
-        "chunkID": item["chunkID"],
         "text": item["text"],
+        "chunkID": item["chunkID"],
+        "fileUrl": item["fileUrl"],
+        "fileS3Path": item["fileS3Path"],
+        "fileName": item["fileName"],
         "evaluation": None,
         "correctedQuestion": None,
         "correctedAnswer": None,
