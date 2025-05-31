@@ -217,8 +217,8 @@ def edit_qa(index: int):
         logging.info(f"Skipping broken QA at index {index}")
         qa_data.pop(index)
 
-    # no more → no-qa page
-    return HTMLResponse('<script>window.location.href="/no-qa";</script>')
+    # no more → thank-you page
+    return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
 
 @app.get("/display_qa", response_class=HTMLResponse)
@@ -231,8 +231,8 @@ def display_qa(index: int):
         logging.info(f"Skipping broken QA at index {index}")
         qa_data.pop(index)
 
-    # none left → go to no-qa
-    return HTMLResponse('<script>window.location.href="/no-qa";</script>')
+    # none left → go to thank-you
+    return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
 @app.post("/evaluate", response_class=HTMLResponse)
 def evaluate(
@@ -242,8 +242,8 @@ def evaluate(
     correctedAnswer: str = Form(None)
 ):
     if index < 0 or index >= len(qa_data):
-        # out of range => no QA left
-        return HTMLResponse('<script>window.location.href="/no-qa";</script>')
+        # out of range => thank-you
+        return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
     item = qa_data[index]
 
@@ -285,9 +285,9 @@ def evaluate(
     # pop from in-memory
     qa_data.pop(index)
 
-    # If no more QA => force full page load of no-qa
+    # If no more QA => force full page load of thank-you
     if not qa_data:
-        return HTMLResponse('<script>window.location.href="/no-qa";</script>')
+        return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
     next_idx = index
     while next_idx < len(qa_data):
@@ -297,5 +297,5 @@ def evaluate(
         logging.info(f"Skipping broken QA at index {next_idx}")  # only logged
         qa_data.pop(next_idx)
 
-    # If we exhausted the list during skipping, go to no-qa
-    return HTMLResponse('<script>window.location.href="/no-qa";</script>')
+    # If we exhausted the list during skipping, go to thank-you
+    return HTMLResponse('<script>window.location.href="/thank-you";</script>')

@@ -62,3 +62,5 @@ env/
 # Data
 *.csv
 *.json
+app_data/feedback.json
+app_data/qa_data.json

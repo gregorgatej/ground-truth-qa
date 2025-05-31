@@ -23,7 +23,7 @@ client = AzureOpenAI(
 s3_access_key = os.getenv("S3_ACCESS_KEY")
 s3_secret_access_key = os.getenv("S3_SECRET_ACCESS_KEY")
 s3_endpoint_url = "moja.shramba.arnes.si"
-bucket_name = "zrsvn-pdfs"
+bucket_name = "zrsvn-rag-najdbe"
 
 s3_client = Minio(
     endpoint=s3_endpoint_url,
@@ -182,6 +182,8 @@ for file_path in all_files:
 
             num_current_entries_per_page[page_number] = num_current_entries_per_page.get(page_number, 0) + 1
 
+    print(f"Processing QA pairs for {file_name}")
+    
     # Generate QA pairs for each chunk in this file
     for entry in prepared_data:
         if not entry.get('text'):
