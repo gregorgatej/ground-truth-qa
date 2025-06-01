@@ -1,16 +1,38 @@
-import json
-import os
-from minio import Minio
-from datetime import timedelta
-from dotenv import load_dotenv
-from openai import AzureOpenAI
-from pydantic import BaseModel
-from typing import Dict, Any
-import glob
+# Cilj skripte:
+# Obdelava json podatkov iz ene ali več datotek
+# (ki so rezultat skript v zrsvn-rag-preprocessing oz.
+# katerakoli datoteka iz mape output_jsons). 
+# Delovanje skripte:
+# Za vsak 'text' pod 'chunks' znotraj json
+# datoteke, ki je dovoljšnje velikosti samodejno generira določeno število parov
+# vprašanj in odgovorov, s pomočjo izbranega LLMa.
+# Rezultat skripte:
+# Pari vprašanj in odgovorov, ki se shranijo v skupno izhodno datoteko
+# (app_data/qa_data.json). Slednjo uporablja app.py.
 
+# Uvoz knjižnic:
+# Delo z datotekami in mapami.
+import os
+import glob
+import json
+# Branje podatkov iz .env datoteke.
+from dotenv import load_dotenv
+# Povezava z oddaljenim strežnikom (tj. z S3 kompatibilna shramba) in
+# generiranje varnih povezav do pdf datotek. 
+from minio import Minio
+# Delo z roki veljavnosti povezav do datotek.
+from datetime import timedelta
+# Klici LLMu, ki generira pare vprašanj in odgovorov.
+from openai import AzureOpenAI
+# Preverjanje in zagotavljanje pravilne oblike izhodnih podatkov.
+from pydantic import BaseModel
+# Boljša berljivost tipov vhodnih podatkov.
+from typing import Dict, Any
+
+# Preberemo varnostne ključe in parametre.
 load_dotenv()
 
-# Azure OPENAI client
+# Vzpostavimo povezavo do storitve Azure OpenAI.
 endpoint = os.getenv("ZRSVN_AZURE_OPENAI_ENDPOINT")
 subscription_key = os.getenv("ZRSVN_AZURE_OPENAI_KEY")
 api_version = "2024-12-01-preview"
@@ -20,6 +42,7 @@ client = AzureOpenAI(
     api_key=subscription_key,
 )
 
+# Vzpostavimo povezavo do S3 shrambe prek Minio klienta.
 s3_access_key = os.getenv("S3_ACCESS_KEY")
 s3_secret_access_key = os.getenv("S3_SECRET_ACCESS_KEY")
 s3_endpoint_url = "moja.shramba.arnes.si"
@@ -29,44 +52,58 @@ s3_client = Minio(
     endpoint=s3_endpoint_url,
     access_key=s3_access_key,
     secret_key=s3_secret_access_key,
-    secure=True  # True for HTTPS
+    secure=True
 )
 
-# Load the source JSON data
+# Nastavimo poti do vseh json datotek znotraj izbrane mape.
 data_folder = './preprocess_data'
 all_files = glob.glob(os.path.join(data_folder, '*.json'))
 
+# Naredi varno povezavo do izbrane datoteke na S3 strežniku, ki velja
+# 1 uro ter doda oznako za določeno stran v pdf-ju (npr. #page=5).
 def generate_presigned_url(file_key: str, page_number: int) -> str:
     """
-    Generates a presigned URL for accessing a specific file and appends a page anchor.
+    Create a secure, one-hour valid link to the selected file on the S3 server,
+    with a tag for a specific page in the PDF (e.g., #page=5).
     """
     try:
         presigned_url = s3_client.presigned_get_object(
             bucket_name,
             file_key,
-            expires=timedelta(hours=1)  # Valid for 1 hour
+            # Veljavnost povezave bo 1 uro.
+            expires=timedelta(hours=1)
         )
         return f"{presigned_url}#page={page_number}"
     except Exception as e:
         return f"Error generating link: {e}"
     
-# Pydantic model for the GPT response
-# We generate two QA pairs for each text element
+# S pomočjo Pydantica definiramo razred, ki bo poskrbel, da bo format
+# odgovora od LLMa vedno vseboval 2 vprašanji in 2 odgovora.
 class QAPairs(BaseModel):
     question_1: str
     answer_1: str
     question_2: str
     answer_2: str
 
-# QA pair generation
+# Generiramo pare vprašanj in odgovorov, ki temeljijo na danem besedilu.
+# Izhod klica LLMu je nastavljen tako, da se pričakuje izhod v obliki kot jo
+# določa Pydantic model QAPairs.
+# Rezultat se preoblikuje v standardizirano podatkovno obliko slovarja 
+# (ang. dictionary) in poleg shrani pomembne dodatne informacije (identifikator,
+# številka strani, povezava do dokumenta itd.).
 def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Generates QA pairs using a specialized GPT-4o-mini method.
+    Generates question-answer pairs based on the provided text. 
+    The LLM call's output is configured to match the QAPairs Pydantic model. 
+    The result is then transformed into a standardized dictionary format, 
+    storing additional relevant information like the identifier, page number, 
+    and document link.
     """
-    # Build the prompt context
+    # Na podlagi vhodnega teksta pripravimo del poziva, ki bo nudil LLMu kontekst
+    # na podlagi katerega bo pripravil odgovore. 
     context = f"Use the following text to generate question answer pairs:\n\n{gen_data['text']}"
 
-    # Make the request to LLM
+    # Pošljemo zahtevo LLMu.
     response = client.beta.chat.completions.parse(
         model='gpt-4o-mini',
         messages=[
@@ -111,14 +148,15 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         response_format=QAPairs
     )
 
-    # 'parsed' is a QAPair object, so we convert it to a dict
+    # 'parsed' je objekt tipa QAPairs, zato ga pretvorimo v slovar.
     parsed_model = response.choices[0].message.parsed
     data = parsed_model.dict()
 
     transformed_data = {
         'questions_answers': [
             {'question': data[f'question_{i}'], 'answer': data[f'answer_{i}']}
-            # This equals the number of QA pairs specified in QAPairs
+            # Spodnja vrednost je enaka številu parov vprašanje-odgovor,
+            # navedenih v razredu QAPairs.
             for i in range(1, 3)
         ]
     }
@@ -133,14 +171,22 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         'boundingBox': gen_data.get('boundingBox', []),
     }
 
+# Seznam v katerega bomo shranjevali rezultate klicov funkciji
+# generate_qa_pairs.
 processed_data = []
 
-# Configuration for maximum entries per page
-# We choose to take a maximum of 2 text items per page
-# which should each be at least 512 characters in size.
-#
-# For each of the text items we will later on generate 2 QA pairs.
-# This will give a max total of 4 QA pairs per page.
+# Glavna zanka za obdelavo json datotek, prek katere pretvorimo podatke
+# v obliko, ki je primerna kot vhod funkciji generate_qa_pairs.
+# Za vsako stran navedeno v datoteki obravnavamo največ 2 besedilna odseka (ang. chunk),
+# ki morata biti dovolj dolga, tj. imeti vsaj 512 znakov.
+# Za vsak besedilni odsek:
+# - Ustvarimo varno povezavo, ki vodi do strani v izvornem
+#   pdf dokumentu kjer se pojavi.
+# - Dodamo pomembne metapodatke.
+# Ker bosta za vsakega izmed besedilnih odsekov generirana 2 para vprašanj
+# in odgovorov bomo na koncu zagona naše skripte pridobili rezultat,
+# ki bo vseboval največ 4 pare vprašanj in odgovorov na posamezno stran
+# izvornega pdf dokumenta.
 for file_path in all_files:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -150,16 +196,21 @@ for file_path in all_files:
     file_name = data['fileName']
     file_s3_path = data['fileS3Path']
 
+    # Seznam v katerega shranjujemo podatke, ki bodo predstavljali
+    # vhod funkciji generate_qa_pairs.
     prepared_data = []
 
-    # Populate prepared_data by iterating through the source JSON
+    # Iteriramo skozi vhodno json datoteko, da zapolnimo prepared_data s
+    # podatki, ki jih potrebuje funkcija generate_qa_pairs.
     for page in data['documentPages']:
         page_number = page['pageNumber']
 
         for chunk in page['chunks']:
-            # Skip short text.
-            # Ideally we would be dealing with 2048 characters (taking into account having
-            # 512 tokens as our chunk size and that 1 token roughly equals 4 characters).
+            # Krajši tekst preskočimo.
+            # V idealnih okoliščinah bi si želeli imeti opravka s čim več
+            # besedilnimi odseki dolžine vsaj 2048 znakov (če vzamemo v zakup,
+            # da imamo v glavni zrsvn-rag aplikaciji nastavljenih 512 tokenov kot velikost
+            # besedilnega bloka (ang. chunk size) in da se en token enači s približno štirimi znaki). 
             if chunk.get('nrCharacters') is None or chunk['nrCharacters'] < 512:
                 continue
 
@@ -168,8 +219,9 @@ for file_path in all_files:
 
             presigned_url = generate_presigned_url(file_s3_path, page_number)
             chunk_id = chunk['chunkID']
-            # Prepare the chunk for QA generation
-            # Provide boundingBox if it exists, otherwise empty list
+            # Dodamo mere robnega okvirja (ang. bounding box), če ta za
+            # izbrani zapis obstaja,
+            # sicer dodamo prazen seznam.
             bounding_box = chunk.get('boundingBox', [])
 
             prepared_data.append({
@@ -184,14 +236,16 @@ for file_path in all_files:
 
     print(f"Processing QA pairs for {file_name}")
     
-    # Generate QA pairs for each chunk in this file
+    # Generiramo pare vprašanj in odgovorov za vsakega izmed tekstualnih elementov
+    # znotraj prepared_data seznama.
+    # Rezultati se shranjujejo v skupni seznam imenovan processed_data.
     for entry in prepared_data:
         if not entry.get('text'):
             continue
         qa_output = generate_qa_pairs(entry)
         processed_data.append(qa_output)
 
-# Save processed data as JSON
+# Rezultat shranimo v novo datoteko oblike json.
 os.makedirs("app_data", exist_ok=True)
 output_path = "app_data/qa_data.json"
 with open(output_path, "w", encoding="utf-8") as f:
