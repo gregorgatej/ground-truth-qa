@@ -65,6 +65,8 @@
         {{ qa_content | safe }}
     </div>
     <script>
+     /* Ta JS skripta po vsaki HTMX menjavi osveži URL slike tako, da doda časovni parameter (?t=...).
+        Tako brskalnik vedno naloži posodobljeno sliko, ne pa jo vzame iz predpomnilnika. */
         document.body.addEventListener('htmx:afterSwap', function(evt) {
             let img = document.getElementById('qa-image');
             if (img) {

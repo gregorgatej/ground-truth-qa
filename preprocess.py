@@ -1,16 +1,13 @@
-# Cilj skripte:
-# Obdelava json podatkov iz ene ali več datotek
+# Obdelava JSON podatkov iz ene ali več datotek
 # (ki so rezultat skript v zrsvn-rag-preprocessing oz.
 # katerakoli datoteka iz mape output_jsons). 
-# Delovanje skripte:
-# Za vsak 'text' pod 'chunks' znotraj json
+# Za vsak 'text' pod 'chunks' znotraj JSON
 # datoteke, ki je dovoljšnje velikosti samodejno generira določeno število parov
 # vprašanj in odgovorov, s pomočjo izbranega LLMa.
-# Rezultat skripte:
-# Pari vprašanj in odgovorov, ki se shranijo v skupno izhodno datoteko
+# Rezultat skripte so pari vprašanj in odgovorov, 
+# ki se shranijo v skupno izhodno datoteko
 # (app_data/qa_data.json). Slednjo uporablja app.py.
 
-# Uvoz knjižnic:
 # Delo z datotekami in mapami.
 import os
 import glob
@@ -18,7 +15,7 @@ import json
 # Branje podatkov iz .env datoteke.
 from dotenv import load_dotenv
 # Povezava z oddaljenim strežnikom (tj. z S3 kompatibilna shramba) in
-# generiranje varnih povezav do pdf datotek. 
+# generiranje varnih povezav do PDF datotek. 
 from minio import Minio
 # Delo z roki veljavnosti povezav do datotek.
 from datetime import timedelta
@@ -55,12 +52,12 @@ s3_client = Minio(
     secure=True
 )
 
-# Nastavimo poti do vseh json datotek znotraj izbrane mape.
+# Nastavimo poti do vseh JSON datotek znotraj izbrane mape.
 data_folder = './preprocess_data'
 all_files = glob.glob(os.path.join(data_folder, '*.json'))
 
 # Naredi varno povezavo do izbrane datoteke na S3 strežniku, ki velja
-# 1 uro ter doda oznako za določeno stran v pdf-ju (npr. #page=5).
+# 1 uro ter doda oznako za določeno stran v PDFju (npr. #page=5).
 def generate_presigned_url(file_key: str, page_number: int) -> str:
     """
     Create a secure, one-hour valid link to the selected file on the S3 server,
@@ -175,18 +172,18 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
 # generate_qa_pairs.
 processed_data = []
 
-# Glavna zanka za obdelavo json datotek, prek katere pretvorimo podatke
+# Glavna zanka za obdelavo JSON datotek, prek katere pretvorimo podatke
 # v obliko, ki je primerna kot vhod funkciji generate_qa_pairs.
 # Za vsako stran navedeno v datoteki obravnavamo največ 2 besedilna odseka (ang. chunk),
 # ki morata biti dovolj dolga, tj. imeti vsaj 512 znakov.
 # Za vsak besedilni odsek:
 # - Ustvarimo varno povezavo, ki vodi do strani v izvornem
-#   pdf dokumentu kjer se pojavi.
+#   PDF dokumentu kjer se pojavi.
 # - Dodamo pomembne metapodatke.
 # Ker bosta za vsakega izmed besedilnih odsekov generirana 2 para vprašanj
 # in odgovorov bomo na koncu zagona naše skripte pridobili rezultat,
 # ki bo vseboval največ 4 pare vprašanj in odgovorov na posamezno stran
-# izvornega pdf dokumenta.
+# izvornega PDF dokumenta.
 for file_path in all_files:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -200,7 +197,7 @@ for file_path in all_files:
     # vhod funkciji generate_qa_pairs.
     prepared_data = []
 
-    # Iteriramo skozi vhodno json datoteko, da zapolnimo prepared_data s
+    # Iteriramo skozi vhodno JSON datoteko, da zapolnimo prepared_data s
     # podatki, ki jih potrebuje funkcija generate_qa_pairs.
     for page in data['documentPages']:
         page_number = page['pageNumber']
@@ -245,7 +242,7 @@ for file_path in all_files:
         qa_output = generate_qa_pairs(entry)
         processed_data.append(qa_output)
 
-# Rezultat shranimo v novo datoteko oblike json.
+# Rezultat shranimo v novo datoteko oblike JSON.
 os.makedirs("app_data", exist_ok=True)
 output_path = "app_data/qa_data.json"
 with open(output_path, "w", encoding="utf-8") as f:
