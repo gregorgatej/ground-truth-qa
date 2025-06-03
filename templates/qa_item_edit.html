@@ -1,25 +1,30 @@
 <div class="mb-4">
+    <!-- Prikaz slike renderirane strani PDF-ja.
+         src="{{ image_url }}": dinamičen vir slike, ki ga strežnik vstavi. -->
     <img id="qa-image" src="{{ image_url }}" alt="Rendered PDF Page"
          class="img-fluid mb-3 border border-dark rounded">
   
     <h5>Vprašanje</h5>
-    <!-- Make it editable -->
+    <!-- Besedilno polje, kjer uporabnik lahko popravi vprašanje. -->
     <textarea name="correctedQuestion" class="form-control" rows="2"
               form="correctionForm">{{ question }}</textarea>
   
+    <!-- Besedilno polje, kjer uporabnik lahko popravi odgovor. -->
     <h5>Odgovor</h5>
     <textarea name="correctedAnswer" class="form-control" rows="4"
               form="correctionForm">{{ answer }}</textarea>
   
     <div class="d-flex justify-content-center mt-4">
-      <!-- This form will be posted by HTMX to finalize the correction -->
+            <!-- Obrazec, ki se pošlje s pomočjo HTMX (asinhrono) 
+                 za shranitev popravkov. -->
       <form id="correctionForm" hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML">
         <input type="hidden" name="index" value="{{ index }}">
         <input type="hidden" name="evaluation" value="corrected">
         <button type="submit" class="btn btn-success me-3">Par vprašanje-odgovor je zdaj ustrezen</button>
       </form>
   
-      <!-- 'Nazaj' returns to read-only mode for this same QA item -->
+      <!-- Prek gumba 'Nazaj' se uporabnik vrne k istem paru vprašanje-odgovor,
+           podanem v načinu samo za branje. -->
       <form hx-get="/display_qa" hx-target="#qa-container" hx-swap="innerHTML">
         <input type="hidden" name="index" value="{{ index }}">
         <button type="submit" class="btn btn-secondary">Nazaj</button>
