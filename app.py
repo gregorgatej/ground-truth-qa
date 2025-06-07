@@ -181,43 +181,40 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str
         y_scale = img_height / page_height
         # Mesto okoli robnega okvirja rahlo povečamo.
         PADDING_FACTOR = 0.05
-        # TODO Če vedno obstaja samo po en BBox, je ta zanka odveč.
-        # Kodo bi lahko posodobili, da uporabljamo bounding_box[0], če je to
-        # vedno seznam len == 1.
-        for box in bounding_box:
-            # Izhodiščne koordinate iz podatkov (v točkah).
-            # Levo.
-            l = box["l"]
-            # Zgoraj.
-            t = box["t"]
-            # Desno.
-            r = box["r"]
-            # Spodaj.
-            b = box["b"]
-            pad_x = (r - l) * PADDING_FACTOR
-            pad_y = (t - b) * PADDING_FACTOR
-            # Okvir glede na PADDING_FACTOR razširimo, vendar pazimo, da ne
-            # gremo čez rob strani.
-            l = max(0, l - pad_x)
-            r = min(page_width, r + pad_x)
-            t = min(page_height, t + pad_y)
-            b = max(0, b - pad_y)
+        box = bounding_box[0]
+        # Izhodiščne koordinate iz podatkov (v točkah).
+        # Levo.
+        l = box["l"]
+        # Zgoraj.
+        t = box["t"]
+        # Desno.
+        r = box["r"]
+        # Spodaj.
+        b = box["b"]
+        pad_x = (r - l) * PADDING_FACTOR
+        pad_y = (t - b) * PADDING_FACTOR
+        # Okvir glede na PADDING_FACTOR razširimo, vendar pazimo, da ne
+        # gremo čez rob strani.
+        l = max(0, l - pad_x)
+        r = min(page_width, r + pad_x)
+        t = min(page_height, t + pad_y)
+        b = max(0, b - pad_y)
 
-            # Koordinate navpično obrnemo, ker je y-koordinata v koordinatnem sistemu
-            # podanega PDFja (kot ga definira PyMuPDF/fitz)
-            # izmerjena od spodaj navzgor (tj. ima izhodišče (0,0) v spodnjem
-            # levem kotu strani), medtem ko je referenčna točka naših
-            # bounding_box koordinat zgornji levi kot.
-            t_corrected = page_height - t
-            b_corrected = page_height - b
+        # Koordinate navpično obrnemo, ker je y-koordinata v koordinatnem sistemu
+        # podanega PDFja (kot ga definira PyMuPDF/fitz)
+        # izmerjena od spodaj navzgor (tj. ima izhodišče (0,0) v spodnjem
+        # levem kotu strani), medtem ko je referenčna točka naših
+        # bounding_box koordinat zgornji levi kot.
+        t_corrected = page_height - t
+        b_corrected = page_height - b
 
-            l_scaled = l * x_scale
-            r_scaled = r * x_scale
-            t_scaled = t_corrected * y_scale
-            b_scaled = b_corrected * y_scale
+        l_scaled = l * x_scale
+        r_scaled = r * x_scale
+        t_scaled = t_corrected * y_scale
+        b_scaled = b_corrected * y_scale
 
-            # Narišemo pol prosojno roza plast.
-            draw.rectangle([l_scaled, t_scaled, r_scaled, b_scaled], fill=(255, 182, 193, 100))
+        # Narišemo pol prosojno roza plast.
+        draw.rectangle([l_scaled, t_scaled, r_scaled, b_scaled], fill=(255, 182, 193, 100))
 
         # Izvirno sliko in roza plast združimo.
         img = Image.alpha_composite(img, overlay)
@@ -260,8 +257,6 @@ def home():
 
     # Če se seznam izprazni zaradi preskakovanja neveljavnih parov vprašanj in 
     # odgovorov prav tako prikaži no_qa.
-    # TODO Preveri ta del prek aplikacije - če preskakuješ, se pokaže thank_you ali
-    # no_qa?
     if not qa_data:
         return HTMLResponse(no_qa_template.render())
 
@@ -271,12 +266,12 @@ def home():
 
 # TODO Je spodnja route potrebna?
 # HTTP pot (ang. route), ki prikliče predlogo no_qa.html.
-@app.get("/no-qa", response_class=HTMLResponse)
-def no_qa():
-    """
-    HTTP route that calls the no_qa.html template.
-    """
-    return HTMLResponse(no_qa_template.render())
+# @app.get("/no-qa", response_class=HTMLResponse)
+# def no_qa():
+#     """
+#     HTTP route that calls the no_qa.html template.
+#     """
+#     return HTMLResponse(no_qa_template.render())
 
 # HTTP pot, ki prikaže zahvalo, ko uporabnik pregleda vse pare 
 # vprašanj in odgovorov.
