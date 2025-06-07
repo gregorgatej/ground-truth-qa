@@ -1,66 +1,6 @@
-*.pdf
 .env
-.zip
-todo/
-data/
-json_data/
+*.json
+*.bak
+assets/
 static/
 __pycache__/
-todo
-0_neaktualno/
-
-# Generic safeguard ignores
-
-# Backup files
-.env.bak
-
-# Private keys
-*.key
-*.pem
-*.crt
-
-# Database files
-*.db
-
-# IDE/Editor folders and files
-.vscode/
-.idea/
-
-# Environment-specific configuration
-.env.local
-
-# Logs and temporary files
-*.log
-logs/
-
-# Build and distribution directories
-node_modules/
-dist/
-build/
-target/
-
-# Temporary editor files
-*.swp
-*.bak
-*.tmp
-
-# Python specific files
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.egg
-*.egg-info/
-dist/
-build/
-*.log
-
-# Virtual environment directories
-venv/
-env/
-
-# Data
-*.csv
-*.json
-app_data/feedback.json
-app_data/qa_data.json

@@ -264,15 +264,6 @@ def home():
     final_html = index_template.render(qa_content=partial_html)
     return HTMLResponse(final_html)
 
-# TODO Je spodnja route potrebna?
-# HTTP pot (ang. route), ki prikliče predlogo no_qa.html.
-# @app.get("/no-qa", response_class=HTMLResponse)
-# def no_qa():
-#     """
-#     HTTP route that calls the no_qa.html template.
-#     """
-#     return HTMLResponse(no_qa_template.render())
-
 # HTTP pot, ki prikaže zahvalo, ko uporabnik pregleda vse pare 
 # vprašanj in odgovorov.
 @app.get("/thank-you", response_class=HTMLResponse)
