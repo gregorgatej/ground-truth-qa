@@ -96,15 +96,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # - Če je prenos neuspešen zabeležimo napako in vrnemo None.
 # - Če je prenos uspešen vrnemo pot (Path) do lokalne PDF datoteke.
 def download_pdf(url: str) -> Path:
-    """
-    Function to download a PDF file from a web URL.
-    - First, compute the MD5 hash of the URL to get a unique
-      filename for the local copy of the file.
-    - If the file does not exist yet (pdf_path.exists()), download it 
-      using requests.get.
-    - If the download fails, log an error and return None.
-    - If the download succeeds, return the path (Path) to the local PDF file.
-    """
     pdf_hash = hashlib.md5(url.encode()).hexdigest()
     pdf_path = Path(f"static/{pdf_hash}.pdf")
     if not pdf_path.exists():
@@ -112,7 +103,7 @@ def download_pdf(url: str) -> Path:
             # HTTP GET zahteva.
             resp = requests.get(url)
             # Sproži izjemo, če koda v odgovoru ni 200.
-            resp.raise_for_status()  # Raise an exception for bad responses
+            resp.raise_for_status()
             pdf_path.write_bytes(resp.content)
         except requests.exceptions.RequestException as e:
             logging.error(f"Error downloading PDF from {url}: {e}")
@@ -131,18 +122,6 @@ def download_pdf(url: str) -> Path:
 # Če pride v postopku do napake vrnemo prazen niz, da s tem označimo neupoštevanje
 # danega para vprašanje-odgovor.
 def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str:
-    """
-    Function to render the specified page of a PDF file.
-    Steps:
-    - Open the PDF file.
-    - Render the specified PDF page as an image.
-    - If a bounding box is provided, apply a semi-transparent pink overlay
-      within the given coordinates.
-    - Save the image as 'static/rendered.png'.
-    - Return the path to the rendered image as a string.
-    If an error occurs during the process, return an empty string to indicate
-    that the given question-answer pair should be skipped.
-    """
     if pdf_path is None:
         # Če PDF ni na voljo ga preskočimo.
         return ""
@@ -231,14 +210,6 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str
 # - Ko imamo veljaven HTML ga vstavimo v glavno predlogo index.html.
 @app.get("/", response_class=HTMLResponse)
 def home():
-    """
-    Definition of the main, home HTTP route:
-    - If qa_data contains no question-answer pairs, display the 'no_qa' page.
-    - Otherwise, find the first question-answer pair for which the function
-      render_qa_partial returns valid HTML. If there is an issue with the selected pair,
-      skip it and move on to the next one.
-    - Once valid HTML is obtained, insert it into the main template index.html.
-    """
     # Če je seznam prazen takoj prikažemo no_qa.
     if not qa_data:
         return HTMLResponse(no_qa_template.render())
@@ -268,10 +239,6 @@ def home():
 # vprašanj in odgovorov.
 @app.get("/thank-you", response_class=HTMLResponse)
 def thank_you():
-    """
-    HTTP route that displays a thank-you page when the user 
-    has reviewed all question-answer pairs.
-    """
     return HTMLResponse(thank_you_template.render())
 
 # Funkcija vrne HTML fragment (brez <html> in <body>), ki vsebuje:
@@ -282,15 +249,6 @@ def thank_you():
 # Če pride do napake (npr. PDF ni dosegljiv, slika se ne more zgenerirati),
 # vrnemo prazen niz, da se lahko problematičen par preskoči.
 def render_qa_partial(index: int, edit_mode: bool) -> str:
-    """
-    The function returns an HTML fragment (without <html> and <body>) that contains:
-    - Rendered PDF page (including the bounding box if provided).
-    - A question-answer pair.
-    - A button to submit feedback (if edit_mode=True,
-      also adds fields for correcting the question and/or answer).
-    If an error occurs (e.g., the PDF is not accessible, or the image cannot be generated),
-    it returns an empty string so that the problematic pair can be skipped.
-    """
     # Glede na dani indeks pridobimo element iz seznama.
     item = qa_data[index]
     # Najprej naložimo PDF (brez dela poti, ki označuje stran).
@@ -338,12 +296,6 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
 # preusmerimo na thank-you.
 @app.get("/edit_qa", response_class=HTMLResponse)
 def edit_qa(index: int):
-    """
-    HTTP route that calls the template in edit mode for question-answer pairs.
-    The GET parameter 'index' specifies which item to display.
-    Similar to home(), invalid items are skipped until we find one that can be shown.
-    When no items remain, the user is redirected to the thank-you page.
-    """
     while index < len(qa_data):
         partial = render_qa_partial(index, edit_mode=True)
         if partial:
@@ -356,9 +308,6 @@ def edit_qa(index: int):
 # Deluje podobno kot pot /edit_qa, le da prikliče predlogo v načinu samo za branje.
 @app.get("/display_qa", response_class=HTMLResponse)
 def display_qa(index: int):
-    """
-    Works similarly to the route /edit_qa, but calls the template in read-only mode.
-    """
     while index < len(qa_data):
         partial = render_qa_partial(index, edit_mode=False)
         if partial:
@@ -392,19 +341,6 @@ def evaluate(
     # Popravljen odgovor (če evaluation == "corrected").
     correctedAnswer: str = Form(None)
 ):
-    """
-    Process the user's evaluation of a question-answer pair:
-    - If the index is invalid, redirect directly to the thank-you page.
-    - Prepare a 'record' object containing the original question-answer pair,
-      metadata, and new values (evaluation, corrections).
-    - If evaluation == "skip", set record["skipped"] = True.
-    - If evaluation == "adequate" or "inadequate", set record["evaluation"] accordingly.
-    - If evaluation == "corrected", save the corrected question and answer.
-    - Also record the submission time by adding a timestamp to the record.
-    - Write the record to app_data/feedback.json by appending it to existing entries (not overwriting).
-    - Remove the processed element from qa_data.
-    - If no elements remain, show thank-you; otherwise, find the next one.
-    """
     # Preverimo ali indeks obstaja.
     if index < 0 or index >= len(qa_data):
         return HTMLResponse('<script>window.location.href="/thank-you";</script>')

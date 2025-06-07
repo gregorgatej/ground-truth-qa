@@ -59,10 +59,6 @@ all_files = glob.glob(os.path.join(data_folder, '*.json'))
 # Naredi varno povezavo do izbrane datoteke na S3 strežniku, ki velja
 # 1 uro ter doda oznako za določeno stran v PDFju (npr. #page=5).
 def generate_presigned_url(file_key: str, page_number: int) -> str:
-    """
-    Create a secure, one-hour valid link to the selected file on the S3 server,
-    with a tag for a specific page in the PDF (e.g., #page=5).
-    """
     try:
         presigned_url = s3_client.presigned_get_object(
             bucket_name,
@@ -89,13 +85,6 @@ class QAPairs(BaseModel):
 # (ang. dictionary) in poleg shrani pomembne dodatne informacije (identifikator,
 # številka strani, povezava do dokumenta itd.).
 def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Generates question-answer pairs based on the provided text. 
-    The LLM call's output is configured to match the QAPairs Pydantic model. 
-    The result is then transformed into a standardized dictionary format, 
-    storing additional relevant information like the identifier, page number, 
-    and document link.
-    """
     # Na podlagi vhodnega teksta pripravimo del poziva, ki bo nudil LLMu kontekst
     # na podlagi katerega bo pripravil odgovore. 
     context = f"Use the following text to generate question answer pairs:\n\n{gen_data['text']}"
