@@ -1,4 +1,5 @@
 <div class="mb-4">
+    <!-- Prikaz slike renderirane strani PDF-ja. -->
     <img id="qa-image" src="{{ image_url }}" alt="Rendered PDF Page"
          class="img-fluid mb-3 border border-dark rounded">
   
@@ -8,9 +9,8 @@
     <h5>Odgovor</h5>
     <p>{{ answer }}</p>
   
-    <!-- Buttons (read-only mode) -->
+    <!-- Obdelava dejanj povezanih z gumbi za podajanje ocen. -->
     <div class="d-flex justify-content-center mt-4">
-      <!-- We nest an <form> for each button so we can do a small HTMX post -->
       <form hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
         <input type="hidden" name="evaluation" value="adequate">
@@ -29,7 +29,8 @@
       </form>
     </div>
   
-    <!-- 'Preskoči' and 'Zaključi' -->
+    <!-- Obdelava dejanj povezanih z gumboma za preskos para
+         in za zaključek postopka evaluacije. -->
     <div class="d-flex justify-content-center mt-3">
       <form hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
