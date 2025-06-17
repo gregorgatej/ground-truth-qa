@@ -5,13 +5,13 @@ Sistem za generiranje in vrednotenje parov vprašanj in odgovorov iz PDF dokumen
 ## O projektu
 
 Sistem implementira dvo-fazni pristop za ustvarjanje kakovostnih QA parov:  
-- **Faza 1:** Avtomatsko generiranje parov vprašanj in odgovorov iz besedilnih odsekov PDF dokumentov z LLM (privzeta izbira je Azure OpenAI - GPT-4o-mini).  
+- **Faza 1:** Avtomatsko generiranje parov vprašanj in odgovorov iz besedilnih odsekov PDF dokumentov z LLMom (privzeta izbira je Azure OpenAI - GPT-4o-mini).  
 - **Faza 2:** Človeška evaluacija in popravki generiranih parov prek spletnega vmesnika.
 
 ## Funkcionalnosti
 
 - Obdelava JSON datotek z besedilnimi odseki iz PDF dokumentov.
-- Generiranje 2 parov vprašanj in odgovorov na besedilni odsek z LLM.
+- Generiranje 2 parov vprašanj in odgovorov na besedilni odsek z LLMom.
 - Varno povezovanje do PDF dokumentov prek S3/MinIO shrambe.
 - Spletni vmesnik za sekvenčno vrednotenje QA parov.
 - Prikaz PDF strani z označenimi robnimi okvirji besedilnih odsekov.
@@ -57,7 +57,7 @@ Sistem implementira dvo-fazni pristop za ustvarjanje kakovostnih QA parov:
 
 ### 1. Predprocesiranje podatkov
 
-Postavite JSON datoteke z besedilnimi odseki v mapo `preprocess_data/` in zaženite:
+Postavite JSON datoteke (tj. rezultat prve faze procesa predprocesiranja v [zrsvn-rag-preprocessing](https://github.com/gregorgatej/zrsvn-rag-preprocessing)) z besedilnimi odseki v mapo `preprocess_data/` in zaženite:
 ```bash
 python preprocess.py
 ```
