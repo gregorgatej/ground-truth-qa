@@ -8,6 +8,9 @@ Sistem implementira dvo-fazni pristop za ustvarjanje kakovostnih QA parov:
 - **Faza 1:** Avtomatsko generiranje parov vprašanj in odgovorov iz besedilnih odsekov PDF dokumentov z LLMom (privzeta izbira je Azure OpenAI - GPT-4o-mini).  
 - **Faza 2:** Človeška evaluacija in popravki generiranih parov prek spletnega vmesnika.
 
+> **Osnovo za razvoj te aplikacije je predstavljal Jupyter notebook podjetja Eyelevel, ki je dostopen tu:**  
+> https://github.com/groundxai/code-samples/blob/master/notebooks/RAGMasters_QAGenWithHuman.ipynb
+
 ## Funkcionalnosti
 
 - Obdelava JSON datotek z besedilnimi odseki iz PDF dokumentov.
