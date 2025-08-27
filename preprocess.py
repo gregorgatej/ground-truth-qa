@@ -131,7 +131,7 @@ for file_path in all_files:
 
             num_current_entries_per_page[page_number] = num_current_entries_per_page.get(page_number, 0) + 1
 
-print(f"Preparation of {len(prepared_data)} files has finished.\nStarting generation of QA pairs...")   
+print(f"Preparation of {len(prepared_data)} chunks has finished.\nStarting generation of QA pairs...")   
 
 # S pomočjo Pydantica definiramo razred, ki bo poskrbel, da bo format
 # odgovora od LLMa vedno vseboval 2 vprašanji in 2 odgovora.
