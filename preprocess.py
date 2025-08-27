@@ -69,7 +69,70 @@ def generate_presigned_url(file_key: str, page_number: int) -> str:
         return f"{presigned_url}#page={page_number}"
     except Exception as e:
         return f"Error generating link: {e}"
-    
+
+# Seznam v katerega shranjujemo podatke, ki bodo predstavljali
+# vhod funkciji generate_qa_pairs.
+prepared_data = []
+
+# Glavna zanka za obdelavo JSON datotek, prek katere pretvorimo podatke
+# v obliko, ki je primerna kot vhod funkciji generate_qa_pairs.
+# Za vsako stran navedeno v datoteki obravnavamo največ 2 besedilna odseka (ang. chunk),
+# ki morata biti dovolj dolga, tj. imeti vsaj 512 znakov.
+# Za vsak besedilni odsek:
+# - Ustvarimo varno povezavo, ki vodi do strani v izvornem
+#   PDF dokumentu kjer se pojavi.
+# - Dodamo pomembne metapodatke.
+# Ker bosta za vsakega izmed besedilnih odsekov generirana 2 para vprašanj
+# in odgovorov bomo na koncu zagona naše skripte pridobili rezultat,
+# ki bo vseboval največ 4 pare vprašanj in odgovorov na posamezno stran
+# izvornega PDF dokumenta.
+for file_path in all_files:
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    max_entries_per_page = 2
+    num_current_entries_per_page = {}
+    file_name = data['fileName']
+    file_s3_path = data['fileS3Path']
+
+    print(f"Preparing data from {file_name} in the right form.")
+
+    # Iteriramo skozi vhodno JSON datoteko, da zapolnimo prepared_data s
+    # podatki, ki jih potrebuje funkcija generate_qa_pairs.
+    for page in data['documentPages']:
+        page_number = page['pageNumber']
+
+        for chunk in page['chunks']:
+            # Krajši tekst preskočimo.
+            # V idealnih okoliščinah bi si želeli imeti opravka s čim več
+            # besedilnimi odseki dolžine vsaj 2048 znakov (če vzamemo v zakup,
+            # da imamo v glavni zrsvn-rag aplikaciji nastavljenih 512 tokenov kot velikost
+            # besedilnega bloka (ang. chunk size) in da se en token enači s približno štirimi znaki). 
+            if chunk.get('nrCharacters') is None or chunk['nrCharacters'] < 512:
+                continue
+
+            if num_current_entries_per_page.get(page_number, 0) >= max_entries_per_page:
+                continue
+
+            presigned_url = generate_presigned_url(file_s3_path, page_number)
+            chunk_id = chunk['chunkID']
+            # Dodamo mere robnega okvirja (ang. bounding box), če ta za
+            # izbrani zapis obstaja,
+            # sicer dodamo prazen seznam.
+            bounding_box = chunk.get('boundingBox', [])
+
+            prepared_data.append({
+                **chunk,
+                'fileUrl': presigned_url,
+                'fileS3Path': file_s3_path,
+                'fileName': file_name,
+                'pageNumber': page_number,
+            })
+
+            num_current_entries_per_page[page_number] = num_current_entries_per_page.get(page_number, 0) + 1
+
+print(f"Preparation of {len(prepared_data)} files has finished.\nStarting generation of QA pairs...")   
+
 # S pomočjo Pydantica definiramo razred, ki bo poskrbel, da bo format
 # odgovora od LLMa vedno vseboval 2 vprašanji in 2 odgovora.
 class QAPairs(BaseModel):
@@ -161,75 +224,16 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
 # generate_qa_pairs.
 processed_data = []
 
-# Glavna zanka za obdelavo JSON datotek, prek katere pretvorimo podatke
-# v obliko, ki je primerna kot vhod funkciji generate_qa_pairs.
-# Za vsako stran navedeno v datoteki obravnavamo največ 2 besedilna odseka (ang. chunk),
-# ki morata biti dovolj dolga, tj. imeti vsaj 512 znakov.
-# Za vsak besedilni odsek:
-# - Ustvarimo varno povezavo, ki vodi do strani v izvornem
-#   PDF dokumentu kjer se pojavi.
-# - Dodamo pomembne metapodatke.
-# Ker bosta za vsakega izmed besedilnih odsekov generirana 2 para vprašanj
-# in odgovorov bomo na koncu zagona naše skripte pridobili rezultat,
-# ki bo vseboval največ 4 pare vprašanj in odgovorov na posamezno stran
-# izvornega PDF dokumenta.
-for file_path in all_files:
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    max_entries_per_page = 2
-    num_current_entries_per_page = {}
-    file_name = data['fileName']
-    file_s3_path = data['fileS3Path']
-
-    # Seznam v katerega shranjujemo podatke, ki bodo predstavljali
-    # vhod funkciji generate_qa_pairs.
-    prepared_data = []
-
-    # Iteriramo skozi vhodno JSON datoteko, da zapolnimo prepared_data s
-    # podatki, ki jih potrebuje funkcija generate_qa_pairs.
-    for page in data['documentPages']:
-        page_number = page['pageNumber']
-
-        for chunk in page['chunks']:
-            # Krajši tekst preskočimo.
-            # V idealnih okoliščinah bi si želeli imeti opravka s čim več
-            # besedilnimi odseki dolžine vsaj 2048 znakov (če vzamemo v zakup,
-            # da imamo v glavni zrsvn-rag aplikaciji nastavljenih 512 tokenov kot velikost
-            # besedilnega bloka (ang. chunk size) in da se en token enači s približno štirimi znaki). 
-            if chunk.get('nrCharacters') is None or chunk['nrCharacters'] < 512:
-                continue
-
-            if num_current_entries_per_page.get(page_number, 0) >= max_entries_per_page:
-                continue
-
-            presigned_url = generate_presigned_url(file_s3_path, page_number)
-            chunk_id = chunk['chunkID']
-            # Dodamo mere robnega okvirja (ang. bounding box), če ta za
-            # izbrani zapis obstaja,
-            # sicer dodamo prazen seznam.
-            bounding_box = chunk.get('boundingBox', [])
-
-            prepared_data.append({
-                **chunk,
-                'fileUrl': presigned_url,
-                'fileS3Path': file_s3_path,
-                'fileName': file_name,
-                'pageNumber': page_number,
-            })
-
-            num_current_entries_per_page[page_number] = num_current_entries_per_page.get(page_number, 0) + 1
-
-    print(f"Processing QA pairs for {file_name}")
-    
-    # Generiramo pare vprašanj in odgovorov za vsakega izmed tekstualnih elementov
-    # znotraj prepared_data seznama.
-    # Rezultati se shranjujejo v skupni seznam imenovan processed_data.
-    for entry in prepared_data:
-        if not entry.get('text'):
-            continue
-        qa_output = generate_qa_pairs(entry)
-        processed_data.append(qa_output)
+# Generiramo pare vprašanj in odgovorov za vsakega izmed tekstualnih elementov
+# znotraj prepared_data seznama.
+# Rezultati se shranjujejo v skupni seznam imenovan processed_data.
+for entry in prepared_data:
+    if not entry.get('text'):
+        continue
+    print(f"Generating QA pairs for {entry['fileName']}")
+    qa_output = generate_qa_pairs(entry)
+    processed_data.append(qa_output)
+print(f"Finished generating QA pairs for {len(processed_data)} files.")
 
 # Rezultat shranimo v novo datoteko oblike JSON.
 os.makedirs("app_data", exist_ok=True)
@@ -237,4 +241,4 @@ output_path = "app_data/qa_data.json"
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(processed_data, f, indent=4, ensure_ascii=False)
 
-print(f"QA processing complete! Data saved to {output_path}.")
+print(f"Data saved to {output_path}")
