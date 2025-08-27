@@ -64,7 +64,7 @@ for item in raw_data:
             "fileS3Path": item["fileS3Path"],
             "fileName": item["fileName"],
             "pageNumber": item["pageNumber"],
-            "boundingBox": item["boundingBox"]
+            "boundingBox": item["boundingBox"],
         })
 # Končni seznam parov vprašanj in odgovorov, skupaj z metapodatki.
 qa_data = flattened_data
@@ -115,13 +115,13 @@ def download_pdf(url: str) -> Path:
 # Koraki:
 # - PDF datoteko odpremo.
 # - Dano PDF stran izrišemo kot sliko (tj. jo renderiramo).
-# - Če je podan robni okvir (bounding_box) se nanese pol prosojna roza plast
+# - Nanese se pol prosojna roza plast, glede na podan robni okvir (bounding_box)
 #   znotraj podanih koordinat.
 # - Slika se shrani kot 'static/rendered.png'.
 # - Vrnjena je pot do renderirane slike v obliki niza (String).
 # Če pride v postopku do napake vrnemo prazen niz, da s tem označimo neupoštevanje
 # danega para vprašanje-odgovor.
-def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str:
+def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str:
     if pdf_path is None:
         # Če PDF ni na voljo ga preskočimo.
         return ""
@@ -147,57 +147,54 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: list) -> str
     img_path = Path("static/rendered.png")
     pix.save(img_path)
 
-    # Če je bounding_box prazen ali None preskočimo risanje prekrivne plasti.
-    if bounding_box:
-        img = Image.open(img_path).convert("RGBA")
-        overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
-        draw = ImageDraw.Draw(overlay)
+    img = Image.open(img_path).convert("RGBA")
+    overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
+    draw = ImageDraw.Draw(overlay)
 
-        page_width = page.rect.width
-        page_height = page.rect.height
-        img_width, img_height = img.size
-        x_scale = img_width / page_width
-        y_scale = img_height / page_height
-        # Mesto okoli robnega okvirja rahlo povečamo.
-        PADDING_FACTOR = 0.05
-        box = bounding_box[0]
-        # Izhodiščne koordinate iz podatkov (v točkah).
-        # Levo.
-        l = box["l"]
-        # Zgoraj.
-        t = box["t"]
-        # Desno.
-        r = box["r"]
-        # Spodaj.
-        b = box["b"]
-        pad_x = (r - l) * PADDING_FACTOR
-        pad_y = (t - b) * PADDING_FACTOR
-        # Okvir glede na PADDING_FACTOR razširimo, vendar pazimo, da ne
-        # gremo čez rob strani.
-        l = max(0, l - pad_x)
-        r = min(page_width, r + pad_x)
-        t = min(page_height, t + pad_y)
-        b = max(0, b - pad_y)
+    page_width = page.rect.width
+    page_height = page.rect.height
+    img_width, img_height = img.size
+    x_scale = img_width / page_width
+    y_scale = img_height / page_height
+    # Mesto okoli robnega okvirja rahlo povečamo.
+    PADDING_FACTOR = 0.05
+    # Izhodiščne koordinate iz podatkov (v točkah).
+    # Levo.
+    l = bounding_box["l"]
+    # Zgoraj.
+    t = bounding_box["t"]
+    # Desno.
+    r = bounding_box["r"]
+    # Spodaj.
+    b = bounding_box["b"]
+    pad_x = (r - l) * PADDING_FACTOR
+    pad_y = (t - b) * PADDING_FACTOR
+    # Okvir glede na PADDING_FACTOR razširimo, vendar pazimo, da ne
+    # gremo čez rob strani.
+    l = max(0, l - pad_x)
+    r = min(page_width, r + pad_x)
+    t = min(page_height, t + pad_y)
+    b = max(0, b - pad_y)
 
-        # Koordinate navpično obrnemo, ker je y-koordinata v koordinatnem sistemu
-        # podanega PDFja (kot ga definira PyMuPDF/fitz)
-        # izmerjena od spodaj navzgor (tj. ima izhodišče (0,0) v spodnjem
-        # levem kotu strani), medtem ko je referenčna točka naših
-        # bounding_box koordinat zgornji levi kot.
-        t_corrected = page_height - t
-        b_corrected = page_height - b
+    # Koordinate navpično obrnemo, ker je y-koordinata v koordinatnem sistemu
+    # podanega PDFja (kot ga definira PyMuPDF/fitz)
+    # izmerjena od spodaj navzgor (tj. ima izhodišče (0,0) v spodnjem
+    # levem kotu strani), medtem ko je referenčna točka naših
+    # bounding_box koordinat zgornji levi kot.
+    t_corrected = page_height - t
+    b_corrected = page_height - b
 
-        l_scaled = l * x_scale
-        r_scaled = r * x_scale
-        t_scaled = t_corrected * y_scale
-        b_scaled = b_corrected * y_scale
+    l_scaled = l * x_scale
+    r_scaled = r * x_scale
+    t_scaled = t_corrected * y_scale
+    b_scaled = b_corrected * y_scale
 
-        # Narišemo pol prosojno roza plast.
-        draw.rectangle([l_scaled, t_scaled, r_scaled, b_scaled], fill=(255, 182, 193, 100))
+    # Narišemo pol prosojno roza plast.
+    draw.rectangle([l_scaled, t_scaled, r_scaled, b_scaled], fill=(255, 182, 193, 100))
 
-        # Izvirno sliko in roza plast združimo.
-        img = Image.alpha_composite(img, overlay)
-        img.save(img_path)
+    # Izvirno sliko in roza plast združimo.
+    img = Image.alpha_composite(img, overlay)
+    img.save(img_path)
 
     return str(img_path)
 
@@ -260,7 +257,7 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
         return ""
 
     # Renderiramo sliko strani z robnim okvirjem.
-    image_url = render_pdf_page(pdf_path, item["pageNumber"], item.get("boundingBox", []))
+    image_url = render_pdf_page(pdf_path, item["pageNumber"], item["boundingBox"])
     
     # Če renderiranje ne uspe element preskočimo.
     if not image_url:  # If the image couldn't be rendered

@@ -117,10 +117,8 @@ for file_path in all_files:
 
             presigned_url = generate_presigned_url(file_s3_path, page_number)
             chunk_id = chunk['chunkID']
-            # Dodamo mere robnega okvirja (ang. bounding box), če ta za
-            # izbrani zapis obstaja,
-            # sicer dodamo prazen seznam.
-            bounding_box = chunk.get('boundingBox', [])
+            # Dodamo mere robnega okvirja (ang. bounding box)
+            bounding_box = chunk['boundingBox']
 
             prepared_data.append({
                 **chunk,
@@ -128,6 +126,7 @@ for file_path in all_files:
                 'fileS3Path': file_s3_path,
                 'fileName': file_name,
                 'pageNumber': page_number,
+                'boundingBox': bounding_box,
             })
 
             num_current_entries_per_page[page_number] = num_current_entries_per_page.get(page_number, 0) + 1
@@ -218,7 +217,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
         'fileS3Path': gen_data['fileS3Path'],
         'fileName': gen_data['fileName'],
         'pageNumber': gen_data['pageNumber'],
-        'boundingBox': gen_data.get('boundingBox', []),
+        'boundingBox': gen_data['boundingBox'],
     }
 
 # Seznam v katerega bomo shranjevali rezultate klicov funkciji
