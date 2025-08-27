@@ -74,6 +74,8 @@ def generate_presigned_url(file_key: str, page_number: int) -> str:
 # vhod funkciji generate_qa_pairs.
 prepared_data = []
 
+max_entries_per_page = 2
+
 # Glavna zanka za obdelavo JSON datotek, prek katere pretvorimo podatke
 # v obliko, ki je primerna kot vhod funkciji generate_qa_pairs.
 # Za vsako stran navedeno v datoteki obravnavamo največ 2 besedilna odseka (ang. chunk),
@@ -90,7 +92,6 @@ for file_path in all_files:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    max_entries_per_page = 2
     num_current_entries_per_page = {}
     file_name = data['fileName']
     file_s3_path = data['fileS3Path']
