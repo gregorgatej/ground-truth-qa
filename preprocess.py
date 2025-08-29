@@ -150,7 +150,7 @@ class QAPairs(BaseModel):
 def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
     # Na podlagi vhodnega teksta pripravimo del poziva, ki bo nudil LLMu kontekst
     # na podlagi katerega bo pripravil odgovore. 
-    context = f"Use the following text to generate question answer pairs:\n\n{gen_data['text']}"
+    context = f"Use the following text to generate question and answer pairs:\n\n{gen_data['text']}"
 
     # Pošljemo zahtevo LLMu.
     response = client.beta.chat.completions.parse(
