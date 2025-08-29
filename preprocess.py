@@ -159,7 +159,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "system",
                 "content": '''You are an AI assistant that always responds in Slovene.
-                You are tasked with turning text into a set of question-answer pairs. 
+                You are tasked with turning text into a set of question and answer pairs. 
                 The goal is to create a set of clear, specific, and relevant questions and answers 
                 that can be answered directly from the provided text.
                 Please format your answers concisely without extra newlines or excessive whitespace.
