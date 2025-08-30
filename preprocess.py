@@ -12,6 +12,8 @@
 import os
 import glob
 import json
+# Za merjenje časa izvajanja programa
+import time
 # Branje podatkov iz .env datoteke.
 from dotenv import load_dotenv
 # Povezava z oddaljenim strežnikom (tj. z S3 kompatibilna shramba) in
@@ -25,6 +27,8 @@ from openai import AzureOpenAI
 from pydantic import BaseModel
 # Boljša berljivost tipov vhodnih podatkov.
 from typing import Dict, Any
+
+start = time.time()
 
 # Preberemo varnostne ključe in parametre.
 load_dotenv()
@@ -43,7 +47,8 @@ client = AzureOpenAI(
 s3_access_key = os.getenv("S3_ACCESS_KEY")
 s3_secret_access_key = os.getenv("S3_SECRET_ACCESS_KEY")
 s3_endpoint_url = "moja.shramba.arnes.si"
-bucket_name = "zrsvn-rag-najdbe"
+# bucket_name = "zrsvn-rag-najdbe"
+bucket_name = "zrsvn-rag-najdbe-vecji"
 
 s3_client = Minio(
     endpoint=s3_endpoint_url,
@@ -242,3 +247,6 @@ with open(output_path, "w", encoding="utf-8") as f:
     json.dump(processed_data, f, indent=4, ensure_ascii=False)
 
 print(f"Data saved to {output_path}")
+
+end = time.time()
+print(f"Execution took {end - start:.2f} seconds")
