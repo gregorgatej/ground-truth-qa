@@ -40,7 +40,7 @@ Sistem implementira dvo-fazni pristop za ustvarjanje kakovostnih QA parov:
 
 2. Namestite odvisnosti:
     ```bash
-    pip install fastapi uvicorn python-dotenv minio openai pydantic PyMuPDF pillow requests jinja2
+    pip install fastapi uvicorn python-dotenv minio openai pydantic PyMuPDF pillow requests jinja2 filelock
     ```
 
 3. Ustvarite `.env` datoteko z naslednjimi spremenljivkami:
@@ -78,7 +78,8 @@ Zaženite spletni strežnik:
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Pregledovalec QA parov lahko sedaj odpre brskalnik na http://localhost:8000 in:
+Pregledovalec QA parov najprej v brskalniku odpre http://localhost:8000/login,
+se prijavi z e-naslovom in nato dostopa do http://localhost:8000, kjer lahko:
 
 - Pregleda prikazane pare vprašanj in odgovorov.
 - Jih označi kot "Ustrezen", "Neustrezen" ali "Preskoči".
