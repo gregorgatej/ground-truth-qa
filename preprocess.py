@@ -63,6 +63,7 @@ all_files = glob.glob(os.path.join(data_folder, '*.json'))
 
 # Naredi varno povezavo do izbrane datoteke na S3 strežniku, ki velja
 # 1 uro ter doda oznako za določeno stran v PDFju (npr. #page=5).
+# TODO Stran v pdf-ju se bi tu lahko tudi izpustilo.
 def generate_presigned_url(file_key: str, page_number: int) -> str:
     try:
         presigned_url = s3_client.presigned_get_object(
