@@ -12,6 +12,7 @@
 import os
 import glob
 import json
+import re
 # Za merjenje časa izvajanja programa
 import time
 # Branje podatkov iz .env datoteke.
@@ -24,7 +25,7 @@ from datetime import timedelta
 # Klici LLMu, ki generira pare vprašanj in odgovorov.
 from openai import AzureOpenAI
 # Preverjanje in zagotavljanje pravilne oblike izhodnih podatkov.
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 # Boljša berljivost tipov vhodnih podatkov.
 from typing import Dict, Any
 
@@ -147,6 +148,60 @@ class QAPairs(BaseModel):
     question_2: str
     answer_2: str
 
+def safe_parse_json(text: str, model: BaseModel):
+    clean_text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text).strip()
+
+    # ✅ If model output contains extra pairs, truncate after answer_2
+    if '"answer_2"' in clean_text:
+        match = re.search(r'"answer_2"\s*:\s*"[^"]*"', clean_text)
+        if match:
+            end_pos = match.end()
+            clean_text = clean_text[:end_pos] + '}'
+            print("Truncated JSON after 'answer_2' to ensure validity.")
+
+    # Try direct validation
+    try:
+        return model.model_validate_json(clean_text)
+    except ValidationError:
+        # Normalize malformed joins like },"{ or }, {" etc.
+        if re.search(r'}\s*,?\s*"?\{', clean_text):
+            print("Detected multiple JSON-like objects; attempting to merge them.")
+            merged = re.sub(r'"\s*,\s*"\{', '}{', clean_text)  # remove stray quotes
+            merged = re.sub(r'}\s*,?\s*"?\{', ',', merged)
+            merged = re.sub(r'^\[|\]$', '', merged)  # remove array brackets
+            merged = merged.strip().strip(',')
+            merged = '{' + merged.strip('{}') + '}'
+            # Re-run truncation after merging
+            if '"answer_2"' in merged:
+                match = re.search(r'"answer_2"\s*:\s*"[^"]*"', merged)
+                if match:
+                    end_pos = match.end()
+                    merged = merged[:end_pos] + '}'
+            try:
+                return model.model_validate_json(merged)
+            except ValidationError as e:
+                print("\n--- JSON parsing error after merge attempt ---")
+                print(e)
+                print("Merged text snippet:")
+                print(merged[:300])
+                print("--- End of snippet ---\n")
+                raise
+
+        # Last resort: extract key-value pairs manually
+        pairs = re.findall(r'"(question_\d+|answer_\d+)"\s*:\s*"([^"]+)"', clean_text)
+        if pairs:
+            data = {k: v for k, v in pairs[:4]}  # only first 4 entries
+            print("Extracted valid pairs manually from malformed JSON.")
+            return model(**data)
+
+        print("\n--- JSON parsing error ---")
+        print(clean_text[:300])
+        print("--- End of snippet ---\n")
+        raise
+
+
+
+
 # Generiramo pare vprašanj in odgovorov, ki temeljijo na danem besedilu.
 # Izhod klica LLMu je nastavljen tako, da se pričakuje izhod v obliki kot jo
 # določa Pydantic model QAPairs.
@@ -165,6 +220,7 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "system",
                 "content": '''You are an AI assistant that always responds in Slovene.
+                
                 You are tasked with turning text into a set of question and answer pairs. 
                 The goal is to create a set of clear, specific, and relevant questions and answers 
                 that can be answered directly from the provided text.
@@ -193,20 +249,52 @@ def generate_qa_pairs(gen_data: Dict[str, Any]) -> Dict[str, Any]:
                 - The answer must contain only the direct response to the question, never any additional questions or unrelated text.
                 - Do not include any questions, prompts, or follow-up statements inside the answer field.
                 - The answer must be a standalone, self-contained response that clearly and precisely addresses the question.
-                - All of the generated text should be written in Slovenian language.'''
+                - All of the generated text should be written in Slovenian language.
+
+                Output format:
+                Generate exactly one JSON object with the following structure:
+                {
+                  "question_1": "...",
+                  "answer_1": "...",
+                  "question_2": "...",
+                  "answer_2": "..."
+                }
+                Important:
+                - Return only ONE JSON object — not an array, not multiple objects, not text.
+                - The JSON must be valid, compact, and contain no newlines or Markdown.
+                - Do NOT include any commas between objects or any trailing commas.
+                - All text values must be plain strings.
+                - Everything must be written in Slovenian.'''
             },
             {
                 "role": "user",
                 "content": context
             },
-        ],
-        response_format=QAPairs
+        ]
     )
 
-    # 'parsed' je objekt tipa QAPairs, zato ga pretvorimo v slovar.
-    parsed_model = response.choices[0].message.parsed
-    data = parsed_model.dict()
 
+    # Extract raw text response
+    json_text = response.choices[0].message.content.strip()
+    
+    # Try to clean and validate JSON
+    # Try parsing directly
+    try:
+        parsed_model = safe_parse_json(json_text, QAPairs)
+    except Exception:
+        # Handle case where model returned two objects separated by commas
+        if '}{' in json_text:
+            merged_text = json_text.replace('}{', ',')
+            merged_text = re.sub(r'^\s*,|,\s*$', '', merged_text)  # remove outer commas if any
+            merged_text = '{' + merged_text + '}'
+            print("Fixed multiple JSON objects by merging them.")
+            parsed_model = safe_parse_json(merged_text, QAPairs)
+        else:
+            raise
+
+    data = parsed_model.dict()
+    
+    
     transformed_data = {
         'questions_answers': [
             {'question': data[f'question_{i}'], 'answer': data[f'answer_{i}']}

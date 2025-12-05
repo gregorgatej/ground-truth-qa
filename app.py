@@ -27,9 +27,41 @@ from jinja2 import Template
 # trenutka.
 from time import time
 # Delo z datumi in časi.
-from datetime import datetime
+from datetime import datetime, timedelta
 # Beleženje dogodkov in napak.
 import logging
+# Drugo ...
+import os
+from minio import Minio
+from urllib.parse import quote
+import unicodedata
+
+from dotenv import load_dotenv
+load_dotenv()
+
+S3_ENDPOINT = "moja.shramba.arnes.si"
+S3_BUCKET = "zrsvn-rag-najdbe-vecji"
+
+# MinIO config
+s3_client = Minio(
+    S3_ENDPOINT,
+    access_key=os.getenv("S3_ACCESS_KEY"),
+    secret_key=os.getenv("S3_SECRET_ACCESS_KEY"),
+    secure=True
+)
+
+def get_fresh_presigned_url(file_s3_path: str, hours: int = 1) -> str | None:
+    """Vrne presigned URL za dani key ali None ob napaki."""
+    try:
+        logging.debug("Generating presigned URL for key: %r", file_s3_path)
+        return s3_client.presigned_get_object(
+            S3_BUCKET,
+            file_s3_path,
+            expires=timedelta(hours=hours),
+        )
+    except Exception:
+        logging.exception("Error generating presigned URL for %s", file_s3_path)
+        return None
 
 # Ustvarimo instanco FastAPI aplikacije.
 app = FastAPI()
@@ -248,8 +280,15 @@ def thank_you():
 def render_qa_partial(index: int, edit_mode: bool) -> str:
     # Glede na dani indeks pridobimo element iz seznama.
     item = qa_data[index]
-    # Najprej naložimo PDF (brez dela poti, ki označuje stran).
-    pdf_path = download_pdf(item["fileUrl"].split("#")[0])
+
+    key = item["fileS3Path"]  # uporabi neposredno, brez normalizacije
+    fresh_url = get_fresh_presigned_url(key)
+
+    if not fresh_url:
+        logging.warning("Cannot generate presigned URL for %s", key)
+        return ""
+
+    pdf_path = download_pdf(fresh_url)
     
     # Če prenos ne uspe element preskočimo.
     if pdf_path is None:
