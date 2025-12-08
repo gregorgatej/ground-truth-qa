@@ -6,9 +6,10 @@
 
 # Spletni strežnik, ki skrbi za prikaz spletne strani in sprejemanje/vraćanje
 # podatkov.
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 # Delo z datotečnimi potmi.
 from pathlib import Path
 # Shranjevanje in branje podatkov v JSON formatu.
@@ -35,9 +36,15 @@ import os
 from minio import Minio
 from urllib.parse import quote
 import unicodedata
+import asyncio
+from filelock import FileLock
 
 from dotenv import load_dotenv
 load_dotenv()
+
+SESSION_SECRET = os.getenv("SESSION_SECRET")
+if not SESSION_SECRET:
+    raise RuntimeError("SESSION_SECRET environment variable is not set")
 
 S3_ENDPOINT = "moja.shramba.arnes.si"
 S3_BUCKET = "zrsvn-rag-najdbe-vecji"
@@ -65,6 +72,7 @@ def get_fresh_presigned_url(file_s3_path: str, hours: int = 1) -> str | None:
 
 # Ustvarimo instanco FastAPI aplikacije.
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
 # Nastavimo, da se vsebina mape "static" streže pod URLjem /static.
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -100,6 +108,8 @@ for item in raw_data:
         })
 # Končni seznam parov vprašanj in odgovorov, skupaj z metapodatki.
 qa_data = flattened_data
+qa_lock = asyncio.Lock()
+feedback_lock = FileLock(str(feedback_path) + ".lock")
 
 # Iz diska naložimo HTML predloge, ki so v obliki samostojnih strani:
 # Prikaže glavno stran z enim parom vprašanje-odgovor.
@@ -108,6 +118,7 @@ index_template = Template(Path("templates/index.html").read_text(encoding="utf-8
 no_qa_template = Template(Path("templates/no_qa.html").read_text(encoding="utf-8"))
 # Izpiše zahvalo uporabniku za sodelovanje.
 thank_you_template = Template(Path("templates/thank_you.html").read_text(encoding="utf-8"))
+login_template = Template(Path("templates/login.html").read_text(encoding="utf-8"))
 
 # Dodatne predloge, ki vsebuje samo del strani:
 # Prikaže sliko strani PDF dokumenta, skupaj s parom vprašanje-odgovor in gumbi
@@ -230,6 +241,15 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str
 
     return str(img_path)
 
+@app.get("/login", response_class=HTMLResponse)
+def login_page():
+    return HTMLResponse(login_template.render())
+
+@app.post("/login", response_class=HTMLResponse)
+def login(request: Request, email: str = Form(...)):
+    request.session["email"] = email
+    return HTMLResponse('<script>window.location.href="/";</script>')
+
 # Definicija glavne, t.i. home HTTP poti (ang. route):
 # - Če qa_data ne vsebuje nobenih parov vprašanj in odgovorov, prikažemo stran
 #   'no_qa'.
@@ -238,36 +258,35 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str
 #   in gremo na naslednjega.
 # - Ko imamo veljaven HTML ga vstavimo v glavno predlogo index.html.
 @app.get("/", response_class=HTMLResponse)
-def home():
-    # Če je seznam prazen takoj prikažemo no_qa.
-    if not qa_data:
-        return HTMLResponse(no_qa_template.render())
+async def home(request: Request):
+    if "email" not in request.session:
+        return HTMLResponse('<script>window.location.href="/login";</script>')
 
-    # Poiščemo prvi element, ki se uspešno izriše.
-    idx = 0
-    partial_html = ""
-    while idx < len(qa_data):
-        partial_html = render_qa_partial(idx, edit_mode=False)
-        if partial_html:
-            break
-        # Če renderiranje ni uspelo to zabeležimo in odstranimo izbrani element
-        # iz seznama.
-        logging.info(f"Skipping broken QA at index {idx}")
-        qa_data.pop(idx)
+    async with qa_lock:
+        if not qa_data:
+            return HTMLResponse(no_qa_template.render())
 
-    # Če se seznam izprazni zaradi preskakovanja neveljavnih parov vprašanj in 
-    # odgovorov prav tako prikaži no_qa.
-    if not qa_data:
-        return HTMLResponse(no_qa_template.render())
+        idx = 0
+        partial_html = ""
+        while idx < len(qa_data):
+            partial_html = render_qa_partial(idx, edit_mode=False)
+            if partial_html:
+                break
+            logging.info(f"Skipping broken QA at index {idx}")
+            qa_data.pop(idx)
 
-    # HTML delno predlogo vstavimo v celotno predlogo.
-    final_html = index_template.render(qa_content=partial_html)
+        if not qa_data:
+            return HTMLResponse(no_qa_template.render())
+
+        final_html = index_template.render(qa_content=partial_html)
     return HTMLResponse(final_html)
 
 # HTTP pot, ki prikaže zahvalo, ko uporabnik pregleda vse pare 
 # vprašanj in odgovorov.
 @app.get("/thank-you", response_class=HTMLResponse)
-def thank_you():
+async def thank_you(request: Request):
+    if "email" not in request.session:
+        return HTMLResponse('<script>window.location.href="/login";</script>')
     return HTMLResponse(thank_you_template.render())
 
 # Funkcija vrne HTML fragment (brez <html> in <body>), ki vsebuje:
@@ -331,26 +350,30 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
 # ne najdemo takšnega, ki ga lahko prikažemo. Ko zmanjka elementov, uporabnika
 # preusmerimo na thank-you.
 @app.get("/edit_qa", response_class=HTMLResponse)
-def edit_qa(index: int):
-    while index < len(qa_data):
-        partial = render_qa_partial(index, edit_mode=True)
-        if partial:
-            return HTMLResponse(partial)
-        logging.info(f"Skipping broken QA at index {index}")
-        qa_data.pop(index)
-
+async def edit_qa(request: Request, index: int):
+    if "email" not in request.session:
+        return HTMLResponse('<script>window.location.href="/login";</script>')
+    async with qa_lock:
+        while index < len(qa_data):
+            partial = render_qa_partial(index, edit_mode=True)
+            if partial:
+                return HTMLResponse(partial)
+            logging.info(f"Skipping broken QA at index {index}")
+            qa_data.pop(index)
     return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
 # Deluje podobno kot pot /edit_qa, le da prikliče predlogo v načinu samo za branje.
 @app.get("/display_qa", response_class=HTMLResponse)
-def display_qa(index: int):
-    while index < len(qa_data):
-        partial = render_qa_partial(index, edit_mode=False)
-        if partial:
-            return HTMLResponse(partial)
-        logging.info(f"Skipping broken QA at index {index}")
-        qa_data.pop(index)
-
+async def display_qa(request: Request, index: int):
+    if "email" not in request.session:
+        return HTMLResponse('<script>window.location.href="/login";</script>')
+    async with qa_lock:
+        while index < len(qa_data):
+            partial = render_qa_partial(index, edit_mode=False)
+            if partial:
+                return HTMLResponse(partial)
+            logging.info(f"Skipping broken QA at index {index}")
+            qa_data.pop(index)
     return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
 # Procesiramo uporabnikovo evaluacijo para vprašanje-odgovor:
@@ -367,73 +390,70 @@ def display_qa(index: int):
 # - Ko je element obdelan ga iz qa_data odstranimo.
 # - Če ni več elementov prikažemo thank-you, sicer poiščemo naslednjega.
 @app.post("/evaluate", response_class=HTMLResponse)
-def evaluate(
-    # Indeks para, ki ga ocenjujemo.
+async def evaluate(
+    request: Request,
     index: int = Form(...),
-    # Vrednosti: "skip", "adequate", "inadequate" ali "corrected".
     evaluation: str = Form(...),
-    # Popravljeno vprašanje (če evaluation == "corrected").
     correctedQuestion: str = Form(None),
-    # Popravljen odgovor (če evaluation == "corrected").
     correctedAnswer: str = Form(None)
 ):
-    # Preverimo ali indeks obstaja.
-    if index < 0 or index >= len(qa_data):
-        return HTMLResponse('<script>window.location.href="/thank-you";</script>')
+    if "email" not in request.session:
+        return HTMLResponse('<script>window.location.href="/login";</script>')
 
-    item = qa_data[index]
+    async with qa_lock:
+        if index < 0 or index >= len(qa_data):
+            return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
-    # Pripravimo timestamp.
-    current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        item = qa_data[index]
+        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
-    record = {
-        "question": item["question"],
-        "answer": item["answer"],
-        "text": item["text"],
-        "chunkID": item["chunkID"],
-        "fileUrl": item["fileUrl"],
-        "fileS3Path": item["fileS3Path"],
-        "fileName": item["fileName"],
-        "evaluation": None,
-        "correctedQuestion": None,
-        "correctedAnswer": None,
-        "skipped": False,
-        "timestamp": current_timestamp
-    }
+        record = {
+            "question": item["question"],
+            "answer": item["answer"],
+            "text": item["text"],
+            "chunkID": item["chunkID"],
+            "fileUrl": item["fileUrl"],
+            "fileS3Path": item["fileS3Path"],
+            "fileName": item["fileName"],
+            "evaluation": None,
+            "correctedQuestion": None,
+            "correctedAnswer": None,
+            "skipped": False,
+            "timestamp": current_timestamp,
+            "userEmail": request.session.get("email")
+        }
 
-    # Nastavimo ustrezna polja glede na izbrane parametre.
-    if evaluation == "skip":
-        record["evaluation"] = None
-        record["skipped"] = True
-    elif evaluation == "adequate":
-        record["evaluation"] = "adequate"
-    elif evaluation == "inadequate":
-        record["evaluation"] = "inadequate"
-    elif evaluation == "corrected":
-        record["evaluation"] = "corrected"
-        record["correctedQuestion"] = correctedQuestion
-        record["correctedAnswer"] = correctedAnswer
+        if evaluation == "skip":
+            record["evaluation"] = None
+            record["skipped"] = True
+        elif evaluation == "adequate":
+            record["evaluation"] = "adequate"
+        elif evaluation == "inadequate":
+            record["evaluation"] = "inadequate"
+        elif evaluation == "corrected":
+            record["evaluation"] = "corrected"
+            record["correctedQuestion"] = correctedQuestion
+            record["correctedAnswer"] = correctedAnswer
 
-    # Preberemo obstoječo vsebino datoteke feedback.json in vanjo dodamo nov vnos.
-    existing = json.loads(feedback_path.read_text(encoding="utf-8"))
-    existing.append(record)
-    feedback_path.write_text(json.dumps(existing, indent=2, ensure_ascii=False), encoding="utf-8")
+        with feedback_lock:
+            existing = json.loads(feedback_path.read_text(encoding="utf-8"))
+            existing.append(record)
+            feedback_path.write_text(
+                json.dumps(existing, indent=2, ensure_ascii=False),
+                encoding="utf-8"
+            )
 
-    # Obdelani par vprašanje-odgovor odstranimo iz spomina.
-    qa_data.pop(index)
+        qa_data.pop(index)
 
-    # Če ni več neobdelanih vprašanj prikažemo thank-you.
-    if not qa_data:
-        return HTMLResponse('<script>window.location.href="/thank-you";</script>')
+        if not qa_data:
+            return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
-    # V nasprotnem primeru poiščemo naslednjega, ki se uspešno izriše.
-    next_idx = index
-    while next_idx < len(qa_data):
-        partial = render_qa_partial(next_idx, edit_mode=False)
-        if partial:
-            return HTMLResponse(partial)
-        logging.info(f"Skipping broken QA at index {next_idx}")
-        qa_data.pop(next_idx)
+        next_idx = index
+        while next_idx < len(qa_data):
+            partial = render_qa_partial(next_idx, edit_mode=False)
+            if partial:
+                return HTMLResponse(partial)
+            logging.info(f"Skipping broken QA at index {next_idx}")
+            qa_data.pop(next_idx)
 
-    # Če se je seznam izpraznil prikažemo thank-you.
     return HTMLResponse('<script>window.location.href="/thank-you";</script>')
