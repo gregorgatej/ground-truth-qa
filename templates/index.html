@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Vrednotenje QA parov</title>
+    <title>Evaluation of QA pairs</title>
 
     <link rel="icon" type="image/png" href="/assets/zrsvn_logo.png?t=12345">
 
@@ -53,21 +53,20 @@
 <body>
     <div class="header-container">
       <img src="/assets/zrsvn_logo.png" alt="ZRSVN Logo">
-      <h2>Vrednotenje parov vprašanj in odgovorov</h2>
+      <h2>Evaluation of question-answer pairs</h2>
     </div>
-    <!-- Tukaj se bo dinamično vstavila prva vsebina para vprašanje-odgovor
-         (HTML fragment). -->
+    <!-- The first content of the question-answer pair (HTML fragment) will be dynamically inserted here. -->
     <div id="qa-container">
-        {{ qa_content | safe }}
+      {{ qa_content | safe }}
     </div>
     <script>
-     /* 
-        Ta JavaScript posluša dogodek HTMX: 'htmx:afterSwap'. 
-        Ko HTMX zamenja vsebino v #qa-container, želimo osvežiti vir slike, 
-        da brskalnik ne uporabi starega predpomnilnika. 
-        Poiščemo sliko z id="qa-image" in ji v URL dodamo trenutni čas 
-        kot parameter '?t=...'.
-     */
+      /* 
+        This JavaScript listens for the HTMX event: 'htmx:afterSwap'.
+        When HTMX swaps the content in #qa-container, we want to refresh the image source
+        so the browser does not use the old cache.
+        We find the image with id="qa-image" and add the current time to its URL
+        as a parameter '?t=...'.
+      */
         document.body.addEventListener('htmx:afterSwap', function(evt) {
             let img = document.getElementById('qa-image');
             if (img) {

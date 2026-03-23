@@ -1,37 +1,22 @@
-# Spletni strežnik (zgrajen z ogrodjem FastAPI), ki prikazuje pare vprašanj
-# in odgovorov na podlagi besedilnih odsekov iz PDF dokumentov. Uporabnik
-# jih pregleda, lahko popravi in odda povratne informacije o tem ali se mu dani
-# par zdi ustrezno zastavljen. Rezultati se za potrebe kasnejše analize
-# shranijo v app_data/feedback.json.
-
-# Spletni strežnik, ki skrbi za prikaz spletne strani in sprejemanje/vraćanje
-# podatkov.
+# Web server (built with FastAPI framework) that displays question-answer pairs
+# based on text segments from PDF documents. The user reviews them, can correct them, 
+# and submits feedback on whether the given pair seems appropriately formulated. 
+# Results are saved in app_data/feedback.json for later analysis.
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-# Delo z datotečnimi potmi.
 from pathlib import Path
-# Shranjevanje in branje podatkov v JSON formatu.
 import json
-# Prenos PDFjev iz oddaljenih naslovov.
 import requests
-# Omogočata odpiranje, prikazovanje in risanje po PDFjih.
+ # Enables opening, displaying, and drawing on PDFs.
 import fitz
 from PIL import Image, ImageDraw
-# Generiranje zgoščenih vrednostih (ang. hashes).
 import hashlib
-# Prikaz dinamičnih HTML strani prek predlog (ang. templates).
 from jinja2 import Template
-# Merjenje trenutnega časa od začetka Unix epohe (tj. 1. 1. 1970, 00:00:00 UTC).
-# Vrne število sekund (z decimalnim delom) pretečenih od slednje do zdajšnjega
-# trenutka.
 from time import time
-# Delo z datumi in časi.
 from datetime import datetime, timedelta
-# Beleženje dogodkov in napak.
 import logging
-# Drugo ...
 import os
 from minio import Minio
 from urllib.parse import quote
@@ -49,7 +34,6 @@ if not SESSION_SECRET:
 S3_ENDPOINT = "moja.shramba.arnes.si"
 S3_BUCKET = "zrsvn-rag-najdbe-vecji"
 
-# MinIO config
 s3_client = Minio(
     S3_ENDPOINT,
     access_key=os.getenv("S3_ACCESS_KEY"),
@@ -70,28 +54,22 @@ def get_fresh_presigned_url(file_s3_path: str, hours: int = 1) -> str | None:
         logging.exception("Error generating presigned URL for %s", file_s3_path)
         return None
 
-# Ustvarimo instanco FastAPI aplikacije.
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
-# Nastavimo, da se vsebina mape "static" streže pod URLjem /static.
 app.mount("/static", StaticFiles(directory="static"), name="static")
-# Enako nastavimo za mapo "assets" oz. URL /assets.
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
-# Definiramo pot do datoteke, ki vsebuje pare vprašanj in odgovorov.
+ # Define the path to the file containing question-answer pairs.
 qa_data_path = Path("app_data/qa_data.json")
-# Pot do datoteke kamor shranjujemo povratne informacije.
 feedback_path = Path("app_data/feedback.json")
-# Če povratne informacije še ne obstajajo ustvarimo prazno JSON polje.
 if not feedback_path.exists():
     feedback_path.write_text("[]", encoding="utf-8")
 
-# Preberemo surove podatke iz qa_data_path in jih pretvorimo v Python objekte.
+# Read raw data from qa_data_path and convert it to Python objects.
 raw_data = json.loads(qa_data_path.read_text(encoding="utf-8"))
-# Ker so podatki gnezdeni jih shranimo v seznam kjer se bodo vsi nahajali
-# na isti ravni, tj. vsak element vsebuje par vprašanje-odgovor in dodatne
-# metapodatke.
+# Since the data is nested, store it in a list where all items are at the same level, i.e., 
+# each element contains a question-answer pair and additional metadata.
 flattened_data = []
 for item in raw_data:
     for qa in item["questions_answers"]:
@@ -106,86 +84,52 @@ for item in raw_data:
             "pageNumber": item["pageNumber"],
             "boundingBox": item["boundingBox"],
         })
-# Končni seznam parov vprašanj in odgovorov, skupaj z metapodatki.
+# Final list of question-answer pairs, together with metadata.
 qa_data = flattened_data
 qa_lock = asyncio.Lock()
 feedback_lock = FileLock(str(feedback_path) + ".lock")
 
-# Iz diska naložimo HTML predloge, ki so v obliki samostojnih strani:
-# Prikaže glavno stran z enim parom vprašanje-odgovor.
 index_template = Template(Path("templates/index.html").read_text(encoding="utf-8"))
-# Sporoči napako, tj. da ni na voljo nobenih parov vprašanj in odgovorov.
 no_qa_template = Template(Path("templates/no_qa.html").read_text(encoding="utf-8"))
-# Izpiše zahvalo uporabniku za sodelovanje.
 thank_you_template = Template(Path("templates/thank_you.html").read_text(encoding="utf-8"))
 login_template = Template(Path("templates/login.html").read_text(encoding="utf-8"))
-
-# Dodatne predloge, ki vsebuje samo del strani:
-# Prikaže sliko strani PDF dokumenta, skupaj s parom vprašanje-odgovor in gumbi
-# za ocenjevanje.
 qa_item_readonly_template = Template(Path("templates/qa_item_readonly.html").read_text(encoding="utf-8"))
-# Prikaže sliko strani PDF dokumenta, skupaj s parom vprašanje-odgovor, ki ga
-# prikaže v urejevalnih poljih (<textarea>) kjer lahko uporabnik spremeni besedilo.
 qa_item_edit_template = Template(Path("templates/qa_item_edit.html").read_text(encoding="utf-8"))
 
-# Nastavimo logiranje (minimalna stopnja sporočil, ki se bodo beležila so tista na
-# INFO nivoju).
+ # Set up logging (minimum level of messages to be recorded is INFO).
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Funkcija za prenos PDF datoteke s spletnega naslova.
-# - Najprej na podlagi URL-ja izračunamo MD5 zgoščeno vrednost, da dobimo unikatno
-#   ime za lokalno kopijo datoteke.
-# - Če datoteka še ne obstaja (pdf_path.exists()) jo prenesemo z requests.get.
-# - Če je prenos neuspešen zabeležimo napako in vrnemo None.
-# - Če je prenos uspešen vrnemo pot (Path) do lokalne PDF datoteke.
 def download_pdf(url: str) -> Path:
     pdf_hash = hashlib.md5(url.encode()).hexdigest()
     pdf_path = Path(f"static/{pdf_hash}.pdf")
     if not pdf_path.exists():
         try:
-            # HTTP GET zahteva.
             resp = requests.get(url)
-            # Sproži izjemo, če koda v odgovoru ni 200.
             resp.raise_for_status()
             pdf_path.write_bytes(resp.content)
         except requests.exceptions.RequestException as e:
             logging.error(f"Error downloading PDF from {url}: {e}")
             return None
-    # Če datoteka že obstaja ali je bila uspešno prenesena vrnemo pot.
     return pdf_path
 
-# Funkcija za prikaz podane strani PDF datoteke.
-# Koraki:
-# - PDF datoteko odpremo.
-# - Dano PDF stran izrišemo kot sliko (tj. jo renderiramo).
-# - Nanese se pol prosojna roza plast, glede na podan robni okvir (bounding_box)
-#   znotraj podanih koordinat.
-# - Slika se shrani kot 'static/rendered.png'.
-# - Vrnjena je pot do renderirane slike v obliki niza (String).
-# Če pride v postopku do napake vrnemo prazen niz, da s tem označimo neupoštevanje
-# danega para vprašanje-odgovor.
 def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str:
     if pdf_path is None:
-        # Če PDF ni na voljo ga preskočimo.
         return ""
     
     try:
-        # PDF dokument odpremo.
         doc = fitz.open(pdf_path)
-        # page_number prične z 1, medtem ko fitz prične štetje z 0, zato
-        # page_number - 1.
+        # page_number starts at 1, while fitz starts counting from 0, so page_number - 1.
         page = doc.load_page(page_number - 1)
     except Exception as e:
             logging.error(f"Error opening PDF file {pdf_path}: {e}")
             return ""
-    # Nastavimo resolucijo za renderiranje.
+    
     render_dpi = 150
     scale_factor = render_dpi / 72
     render_matrix = fitz.Matrix(scale_factor, scale_factor)
-    # PDF je vektorji zgrajena datoteka, zato jo je treba za prikaz na 
-    # zaslonu ali shranjevanje v slikovnem formatu renderirati v piksle.
-    # Stran iz PDF se pretvori (renderira) v raster sliko oz. pixmap objekt,
-    # ki vsebuje podatke o pikslih (barva, alfa kanal itd.).
+    # PDF is a vector-based file, so it must be rendered to pixels for display or saving in image format.
+    # The PDF page is converted (rendered) to a raster image or pixmap object, which contains pixel data 
+    # (color, alpha channel, etc.).
     pix = page.get_pixmap(matrix=render_matrix)
     img_path = Path("static/rendered.png")
     pix.save(img_path)
@@ -199,31 +143,24 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str
     img_width, img_height = img.size
     x_scale = img_width / page_width
     y_scale = img_height / page_height
-    # Mesto okoli robnega okvirja rahlo povečamo.
+    # Slightly increase the area around the bounding box.
     PADDING_FACTOR = 0.05
-    # Izhodiščne koordinate iz podatkov (v točkah).
-    # Levo.
     l = bounding_box["l"]
-    # Zgoraj.
     t = bounding_box["t"]
-    # Desno.
     r = bounding_box["r"]
-    # Spodaj.
     b = bounding_box["b"]
     pad_x = (r - l) * PADDING_FACTOR
     pad_y = (t - b) * PADDING_FACTOR
-    # Okvir glede na PADDING_FACTOR razširimo, vendar pazimo, da ne
-    # gremo čez rob strani.
+    # Expand the box according to PADDING_FACTOR, but be careful not to go beyond the page edge.
     l = max(0, l - pad_x)
     r = min(page_width, r + pad_x)
     t = min(page_height, t + pad_y)
     b = max(0, b - pad_y)
 
-    # Koordinate navpično obrnemo, ker je y-koordinata v koordinatnem sistemu
-    # podanega PDFja (kot ga definira PyMuPDF/fitz)
-    # izmerjena od spodaj navzgor (tj. ima izhodišče (0,0) v spodnjem
-    # levem kotu strani), medtem ko je referenčna točka naših
-    # bounding_box koordinat zgornji levi kot.
+    # Vertically flip coordinates, because the y-coordinate in the PDF coordinate system 
+    # (as defined by PyMuPDF/fitz)
+    # is measured from bottom up (i.e., origin (0,0) is at the bottom left corner of the page), 
+    # while the reference point of our bounding_box coordinates is the top left corner.
     t_corrected = page_height - t
     b_corrected = page_height - b
 
@@ -232,10 +169,10 @@ def render_pdf_page(pdf_path: Path, page_number: int, bounding_box: dict) -> str
     t_scaled = t_corrected * y_scale
     b_scaled = b_corrected * y_scale
 
-    # Narišemo pol prosojno roza plast.
+    # Draw a semi-transparent pink layer.
     draw.rectangle([l_scaled, t_scaled, r_scaled, b_scaled], fill=(255, 182, 193, 100))
 
-    # Izvirno sliko in roza plast združimo.
+    # Combine the original image and the pink layer.
     img = Image.alpha_composite(img, overlay)
     img.save(img_path)
 
@@ -250,13 +187,11 @@ def login(request: Request, email: str = Form(...)):
     request.session["email"] = email
     return HTMLResponse('<script>window.location.href="/";</script>')
 
-# Definicija glavne, t.i. home HTTP poti (ang. route):
-# - Če qa_data ne vsebuje nobenih parov vprašanj in odgovorov, prikažemo stran
-#   'no_qa'.
-# - V nasprotnem primeru poiščemo prvi par vprašanje-odgovor za katerega funkcija
-#   render_qa_partial vrne veljaven HTML. Če ob tem pride to težav izbrani par preskočimo
-#   in gremo na naslednjega.
-# - Ko imamo veljaven HTML ga vstavimo v glavno predlogo index.html.
+ # Definition of the main, i.e., home HTTP route:
+# - If qa_data does not contain any question-answer pairs, display the 'no_qa' page.
+# - Otherwise, find the first question-answer pair for which the render_qa_partial 
+#   function returns valid HTML. If there are issues, skip the selected pair and move to the next.
+# - When valid HTML is available, insert it into the main index.html template.
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     if "email" not in request.session:
@@ -281,26 +216,16 @@ async def home(request: Request):
         final_html = index_template.render(qa_content=partial_html)
     return HTMLResponse(final_html)
 
-# HTTP pot, ki prikaže zahvalo, ko uporabnik pregleda vse pare 
-# vprašanj in odgovorov.
 @app.get("/thank-you", response_class=HTMLResponse)
 async def thank_you(request: Request):
     if "email" not in request.session:
         return HTMLResponse('<script>window.location.href="/login";</script>')
     return HTMLResponse(thank_you_template.render())
 
-# Funkcija vrne HTML fragment (brez <html> in <body>), ki vsebuje:
-# - Izrisano stran PDFja (skupaj z robnim okvirjem, če je ta podan).
-# - Par vprašanje-odgovor.
-# - Gumb za pošiljanje povratne informacije (če je edit_mode=True,
-#   dodamo še polje za popravek vprašanja in/ali odgovora).
-# Če pride do napake (npr. PDF ni dosegljiv, slika se ne more zgenerirati),
-# vrnemo prazen niz, da se lahko problematičen par preskoči.
 def render_qa_partial(index: int, edit_mode: bool) -> str:
-    # Glede na dani indeks pridobimo element iz seznama.
     item = qa_data[index]
 
-    key = item["fileS3Path"]  # uporabi neposredno, brez normalizacije
+    key = item["fileS3Path"]
     fresh_url = get_fresh_presigned_url(key)
 
     if not fresh_url:
@@ -309,26 +234,22 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
 
     pdf_path = download_pdf(fresh_url)
     
-    # Če prenos ne uspe element preskočimo.
     if pdf_path is None:
         logging.warning(f"Skipping QA item at index {index} due to PDF download failure.")
         return ""
 
-    # Renderiramo sliko strani z robnim okvirjem.
     image_url = render_pdf_page(pdf_path, item["pageNumber"], item["boundingBox"])
     
-    # Če renderiranje ne uspe element preskočimo.
-    if not image_url:  # If the image couldn't be rendered
+    if not image_url:
         logging.warning(f"Skipping QA item at index {index} due to rendering failure.")
         return ""
-
-    # Dodamo parameter t(čas), da brskalnik vedno zahteva novo kopijo slike
-    # in ne uporabi stare iz predpomnilnika. 
+    
+    # Add parameter t(time) so the browser always requests a new copy of the image and does 
+    # not use the old one from cache.
     image_url = f"/{image_url}?t={int(time())}"
 
     if edit_mode:
-        # Če imamo podan edit_mode=True vrnemo predlogo z možnostjo vnašanja
-        # popravkov.
+        # If edit_mode=True is provided, return template with option to enter corrections.
         return qa_item_edit_template.render(
             index=index,
             question=item["question"],
@@ -336,7 +257,7 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
             image_url=image_url
         )
     else:
-        # V nasprotnem primeru vrnemo predlogo v načinu zgolj za branje.
+        # Otherwise, return template in read-only mode.
         return qa_item_readonly_template.render(
             index=index,
             question=item["question"],
@@ -344,11 +265,9 @@ def render_qa_partial(index: int, edit_mode: bool) -> str:
             image_url=image_url
         )
 
-# HTTP pot (ang. route), ki prikliče predlogo v načinu urejanja parov vprašanj in
-# odgovorov. Prek GET parametra 'index' pridobimo podatek o elementu, ki je
-# prikazan. Podobno kot pri home() preskakujemo neveljavne elemente, dokler
-# ne najdemo takšnega, ki ga lahko prikažemo. Ko zmanjka elementov, uporabnika
-# preusmerimo na thank-you.
+# HTTP route that calls the template in edit mode for question-answer pairs. 
+# Through the GET parameter 'index', obtain information about the displayed element. 
+# Similar to home(), skip invalid elements until a displayable one is found. When elements run out, redirect the user to thank-you.
 @app.get("/edit_qa", response_class=HTMLResponse)
 async def edit_qa(request: Request, index: int):
     if "email" not in request.session:
@@ -362,7 +281,7 @@ async def edit_qa(request: Request, index: int):
             qa_data.pop(index)
     return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
-# Deluje podobno kot pot /edit_qa, le da prikliče predlogo v načinu samo za branje.
+ # Works similarly to /edit_qa route, but calls the template in read-only mode.
 @app.get("/display_qa", response_class=HTMLResponse)
 async def display_qa(request: Request, index: int):
     if "email" not in request.session:
@@ -376,19 +295,16 @@ async def display_qa(request: Request, index: int):
             qa_data.pop(index)
     return HTMLResponse('<script>window.location.href="/thank-you";</script>')
 
-# Procesiramo uporabnikovo evaluacijo para vprašanje-odgovor:
-# - Če je indeks neveljaven, neposredno preusmerimo na thank-you.
-# - Pripravimo objekt 'record', ki vsebuje starejši par vprašanje-odgovor,
-#   originalne metapodatke in nove vrednosti (evaluation, popravki).
-# - Če evaluation == "skip", označimo record["skipped"] = True.
-# - Če evaluation == "adequate" ali "inadequate", ustrezno nastavimo
-#   record["evaluation"].
-# - Če evaluation == "corrected", shranimo popravljeno vprašanje in odgovor.
-# - V record zabeležimo tudi čas vnosa (tj. dodamo timestamp).
-# - Zapišemo record v app_data/feedback.json (na način, da ga dodamo
-#   obstoječim zapisom (append in ne overwrite).
-# - Ko je element obdelan ga iz qa_data odstranimo.
-# - Če ni več elementov prikažemo thank-you, sicer poiščemo naslednjega.
+# Process user's evaluation of the question-answer pair:
+# - If the index is invalid, redirect directly to thank-you.
+# - Prepare a 'record' object containing the previous question-answer pair, original metadata, and new values (evaluation, corrections).
+# - If evaluation == "skip", mark record["skipped"] = True.
+# - If evaluation == "adequate" or "inadequate", set record["evaluation"] accordingly.
+# - If evaluation == "corrected", save the corrected question and answer.
+# - Also record the entry time in 'record' (i.e., add timestamp).
+# - Write 'record' to app_data/feedback.json (append to existing records, not overwrite).
+# - When the element is processed, remove it from qa_data.
+# - If there are no more elements, display thank-you; otherwise, find the next one.
 @app.post("/evaluate", response_class=HTMLResponse)
 async def evaluate(
     request: Request,

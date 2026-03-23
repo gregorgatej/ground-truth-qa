@@ -1,46 +1,42 @@
 <div class="mb-4">
-    <!-- Prikaz slike renderirane strani PDF-ja. -->
     <img id="qa-image" src="{{ image_url }}" alt="Rendered PDF Page"
          class="img-fluid mb-3 border border-dark rounded">
   
-    <h5>Vprašanje</h5>
+    <h5>Question</h5>
     <p>{{ question }}</p>
   
-    <h5>Odgovor</h5>
+    <h5>Answer</h5>
     <p>{{ answer }}</p>
   
-    <!-- Obdelava dejanj povezanih z gumbi za podajanje ocen. -->
     <div class="d-flex justify-content-center mt-4">
       <form hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
         <input type="hidden" name="evaluation" value="adequate">
-        <button type="submit" class="btn btn-success">Ustrezen</button>
+        <button type="submit" class="btn btn-success">Adequate</button>
       </form>
   
       <form hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
         <input type="hidden" name="evaluation" value="inadequate">
-        <button type="submit" class="btn btn-danger">Neustrezen</button>
+        <button type="submit" class="btn btn-danger">Inadequate</button>
       </form>
   
       <form hx-get="/edit_qa" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
-        <button type="submit" class="btn btn-warning">Vnesi popravek</button>
+        <button type="submit" class="btn btn-warning">Enter correction</button>
       </form>
     </div>
   
-    <!-- Obdelava dejanj povezanih z gumboma za preskos para
-         in za zaključek postopka evaluacije. -->
     <div class="d-flex justify-content-center mt-3">
       <form hx-post="/evaluate" hx-target="#qa-container" hx-swap="innerHTML" class="me-2">
         <input type="hidden" name="index" value="{{ index }}">
         <input type="hidden" name="evaluation" value="skip">
-        <button type="submit" class="btn btn-secondary">Preskoči</button>
+        <button type="submit" class="btn btn-secondary">Skip</button>
       </form>
   
       <button type="button" class="btn btn-secondary"
-              onclick="window.location.href='/thank-you'">
-        Zaključi
+          onclick="window.location.href='/thank-you'">
+        Finish
       </button>
     </div>
   </div>
