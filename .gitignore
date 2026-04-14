@@ -1,6 +1,5 @@
 .env
 *.json
 *.bak
-assets/
 static/
 __pycache__/
