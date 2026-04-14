@@ -2,6 +2,11 @@
 
 System for generating and evaluating question–answer pairs from PDF documents using LLMs.
 
+![QA Evaluation UI](docs/assets/evaluation.png)
+
+*Example of the QA evaluation interface.*  
+*As you can see, most user-facing text was originally written in Slovene, reflecting the principal target users.*
+
 ## About the project
 
 The system implements a two-phase approach for creating high-quality QA pairs:  
