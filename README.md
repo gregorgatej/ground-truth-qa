@@ -10,7 +10,7 @@ System for generating and evaluating question–answer pairs from PDF documents 
 ## About the project
 
 The system implements a two-phase approach for creating high-quality QA pairs:  
-- **Phase 1:** Automatic generation of question–answer pairs from text segments of PDF documents using an LLM (default choice is Azure OpenAI – GPT-4o-mini).  
+- **Phase 1:** Automatic generation of question–answer pairs from text segments of PDF documents using an LLM.  
 - **Phase 2:** Human evaluation and correction of generated pairs through a web interface.
 
 > **The development of this application was based on a Jupyter notebook by [EyeLevel](https://www.eyelevel.ai/), available here:**  
@@ -89,4 +89,5 @@ The QA reviewer can now open a browser at http://localhost:8000
 - Review the displayed question–answer pairs
 - Mark them as "Relevant", "Irrelevant", or "Skip"
 - Edit and correct their content if necessary
-- Feedback is stored in app_data/feedback.json
+
+Feedback is stored in app_data/feedback.json
